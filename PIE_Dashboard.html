@@ -2872,26 +2872,44 @@
         
         // For cross-sell: use actual bureau pull data from CI
         function buildCrossSellVolumes(account) {
-            const veh = account.estimated_vehicles || Math.round((account.total_bureau_pulls || 0) / 2.5);
-            const hp = account.hp_actual || 0;
-            const sp = account.sp_actual || 0;
+            // Use total_bureau_pulls (current monthly from CI) as the volume base
+            // hp_actual/sp_actual come from NMA parse and may be stale or from a different timeframe
+            const totalPulls = account.total_bureau_pulls || 0;
+            const veh = account.estimated_vehicles || Math.round(totalPulls / 2.5);
+
+            const hpRaw = account.hp_actual || 0;
+            const spRaw = account.sp_actual || 0;
+            const rawTotal = hpRaw + spRaw;
+
+            // Determine effective hard/soft split scaled to current monthly volume
+            let effectiveHp, effectiveSp;
+            if (spRaw > 0 && rawTotal > 0) {
+                // Real hard/soft data exists — use proportional ratio against current totalPulls
+                const hpRatio = hpRaw / rawTotal;
+                effectiveHp = Math.round(totalPulls * hpRatio);
+                effectiveSp = totalPulls - effectiveHp;
+            } else {
+                // No soft pull data (credit-only customers) — apply same 60/40 split as prospects
+                effectiveHp = Math.round(totalPulls * 0.60);
+                effectiveSp = totalPulls - effectiveHp;
+            }
+
+            // Per-bureau distribution
             const eqPct = (account.eq_pct || 0) / 100;
             const exPct = (account.ex_pct || 0) / 100;
             const tuPct = (account.tu_pct || 0) / 100;
-
-            // Use actual per-bureau pulls if available, otherwise split by bureau %
-            const hasBreakdown = (account.eq_pulls || 0) + (account.ex_pulls || 0) + (account.tu_pulls || 0) > 0;
+            const hasBreakdown = (eqPct + exPct + tuPct) > 0;
 
             return {
                 vehicles_sold: veh,
-                efx_hp: hasBreakdown ? Math.round(hp * eqPct) : Math.round(hp * 0.40),
-                exp_hp: hasBreakdown ? Math.round(hp * exPct) : Math.round(hp * 0.35),
-                tu_hp: hasBreakdown ? Math.round(hp * tuPct) : Math.round(hp * 0.25),
-                efx_sp: hasBreakdown ? Math.round(sp * eqPct) : Math.round(sp * 0.40),
-                exp_sp: hasBreakdown ? Math.round(sp * exPct) : Math.round(sp * 0.35),
-                tu_sp: hasBreakdown ? Math.round(sp * tuPct) : Math.round(sp * 0.25),
+                efx_hp: hasBreakdown ? Math.round(effectiveHp * eqPct) : Math.round(effectiveHp * 0.40),
+                exp_hp: hasBreakdown ? Math.round(effectiveHp * exPct) : Math.round(effectiveHp * 0.35),
+                tu_hp: hasBreakdown ? Math.round(effectiveHp * tuPct) : Math.round(effectiveHp * 0.25),
+                efx_sp: hasBreakdown ? Math.round(effectiveSp * eqPct) : Math.round(effectiveSp * 0.40),
+                exp_sp: hasBreakdown ? Math.round(effectiveSp * exPct) : Math.round(effectiveSp * 0.35),
+                tu_sp: hasBreakdown ? Math.round(effectiveSp * tuPct) : Math.round(effectiveSp * 0.25),
                 has_dealertrack: true,
-                is_estimate: false
+                is_estimate: spRaw === 0
             };
         }
         
