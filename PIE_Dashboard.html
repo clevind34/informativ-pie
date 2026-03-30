@@ -2818,15 +2818,45 @@
         const PIE_PRICING_API = 'https://customer-intelligence-dashboard.netlify.app/.netlify/functions/reprice-pricing';
         
         // Volume estimation model for net-new prospects
-        function estimateVolumes(prospect) {
-            // Industry benchmark: ~2.5 credit pulls per vehicle sold
+        function estimateVolumes(prospect, prospectName) {
+            // Check if rep has entered actual bureau volumes via disposition
+            if (prospectName) {
+                const fbIdx = findExistingRecord(prospectName, 'net_new');
+                if (fbIdx >= 0) {
+                    const fb = feedbackHistory[fbIdx];
+                    const repVehicles = fb.vehiclesSold && fb.vehiclesSold !== '-' ? parseInt(fb.vehiclesSold) : 0;
+                    const repHard = fb.hardPulls && fb.hardPulls !== '-' ? parseInt(fb.hardPulls) : 0;
+                    const repSoft = fb.softPulls && fb.softPulls !== '-' ? parseInt(fb.softPulls) : 0;
+                    // Use rep data if they provided at least vehicles OR pulls
+                    if (repVehicles > 0 || repHard > 0 || repSoft > 0) {
+                        // Derive vehicles from pulls if not entered: total pulls / 2.5
+                        const vehicles = repVehicles > 0 ? repVehicles : ((repHard + repSoft) > 0 ? Math.round((repHard + repSoft) / 2.5) : (prospect.estimated_vehicles || 150));
+                        const hardPulls = repHard > 0 ? repHard : Math.round(vehicles * 2.5 * 0.60);
+                        const softPulls = repSoft > 0 ? repSoft : Math.round(vehicles * 2.5 * 0.40);
+                        return {
+                            vehicles_sold: vehicles,
+                            efx_hp: Math.round(hardPulls * 0.40),
+                            exp_hp: Math.round(hardPulls * 0.35),
+                            tu_hp: Math.round(hardPulls * 0.25),
+                            efx_sp: Math.round(softPulls * 0.40),
+                            exp_sp: Math.round(softPulls * 0.35),
+                            tu_sp: Math.round(softPulls * 0.25),
+                            has_dealertrack: true,
+                            is_estimate: false,
+                            is_rep_verified: true
+                        };
+                    }
+                }
+            }
+            // Fallback: industry benchmarks from ICP estimate
+            // ~2.5 credit pulls per vehicle sold
             // Split: ~60% hard pulls, ~40% soft pulls
             // Bureau split for dealerships: EFX ~40%, EXP ~35%, TU ~25%
             const vehicles = prospect.estimated_vehicles || 150; // default mid-market
             const totalPulls = vehicles * 2.5;
             const hardPulls = Math.round(totalPulls * 0.60);
             const softPulls = Math.round(totalPulls * 0.40);
-            
+
             return {
                 vehicles_sold: vehicles,
                 efx_hp: Math.round(hardPulls * 0.40),
@@ -2891,10 +2921,10 @@
             } else {
                 const p = allNetNewProspects[index];
                 customerName = p.company_name;
-                // For net-new, estimate from ICP data
+                // For net-new, check rep-entered volumes first, then estimate from ICP data
                 volumes = estimateVolumes({
                     estimated_vehicles: p.estimated_vehicles || p.est_vehicles || 0
-                });
+                }, p.company_name);
                 currentMrr = 0;
                 recTier = p.recommended_tier;
                 // Set context so "Ask Chuck to Refine" works
@@ -3033,6 +3063,19 @@
             });
 
             const isEstimate = volumes.is_estimate;
+            const isRepVerified = volumes.is_rep_verified || false;
+
+            // Volume source banner: green for rep-verified, amber for estimated, none for cross-sell actuals
+            let volumeBanner = '';
+            if (isRepVerified) {
+                volumeBanner = '<div style="background:#ECFDF5;border:1px solid #A7F3D0;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:#065F46;display:flex;align-items:center;gap:6px;">' +
+                    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' +
+                    '<strong>Rep-Verified Volumes</strong> — pricing uses rep-entered bureau data</div>';
+            } else if (isEstimate) {
+                volumeBanner = '<div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:#92400E;display:flex;align-items:center;gap:6px;">' +
+                    '<svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B" stroke="none"><path d="M12 2L1 21h22L12 2zm0 4l7.53 13H4.47L12 6z"/><path d="M11 10h2v5h-2zm0 6h2v2h-2z"/></svg>' +
+                    'Estimated volumes — enter actuals in disposition to improve accuracy</div>';
+            }
 
             overlay.innerHTML = '<div style="background:white;border-radius:16px;max-width:560px;width:92%;max-height:88vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,0.25);animation:chuckSlideIn 0.25s ease-out;">' +
                 '<div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">' +
@@ -3040,7 +3083,7 @@
                     '<button onclick="document.getElementById(\'chuckOverlay\').remove()" style="background:none;border:none;cursor:pointer;padding:4px;color:var(--slate-400);font-size:20px;line-height:1;">&times;</button>' +
                 '</div>' +
                 '<div style="padding:14px 20px;">' +
-                    (isEstimate ? '<div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:#92400E;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B" stroke="none"><path d="M12 2L1 21h22L12 2zm0 4l7.53 13H4.47L12 6z"/><path d="M11 10h2v5h-2zm0 6h2v2h-2z"/></svg>Estimated volumes — actual pricing requires intake sheet</div>' : '') +
+                    volumeBanner +
                     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;background:var(--slate-50);border-radius:8px;padding:8px;">' +
                     '<div style="text-align:center;"><div style="font-size:9px;color:var(--slate-500);text-transform:uppercase;">Vehicles</div><div style="font-size:14px;font-weight:800;color:var(--navy-950);">' + (volumes.vehicles_sold || '-') + '</div></div>' +
                     '<div style="text-align:center;"><div style="font-size:9px;color:var(--slate-500);text-transform:uppercase;">Hard Pulls</div><div style="font-size:14px;font-weight:800;color:var(--navy-950);">' + (volumes.efx_hp + volumes.exp_hp + volumes.tu_hp) + '</div></div>' +
@@ -3172,7 +3215,7 @@
             });
         }
         
-        // Generate external price sheet — opens print-ready HTML in new tab
+        // Generate external price sheet — opens print-ready one-pager HTML in new tab
         function generatePiePriceSheet() {
             const pd = window._piePricingData;
             if (!pd) return;
@@ -3196,9 +3239,12 @@
                 tierData.push({ tier, price: currentPrice, gm: currentGM, isRec: tier === pd.recTier });
             });
 
+            // CRITICAL: volumes from _piePricingData are the EXACT volumes from the pricing calculator
             const v = pd.volumes || {};
             const totalHp = (v.efx_hp || 0) + (v.exp_hp || 0) + (v.tu_hp || 0);
             const totalSp = (v.efx_sp || 0) + (v.exp_sp || 0) + (v.tu_sp || 0);
+            const isRepVerified = v.is_rep_verified || false;
+            const isEstimate = v.is_estimate || false;
 
             // Get account data
             let account = null;
@@ -3208,11 +3254,17 @@
                 account = allNetNewProspects[pd.index];
             }
 
-            const bureaus = [];
-            if ((v.efx_hp || 0) + (v.efx_sp || 0) > 0) bureaus.push('Equifax');
-            if ((v.exp_hp || 0) + (v.exp_sp || 0) > 0) bureaus.push('Experian');
-            if ((v.tu_hp || 0) + (v.tu_sp || 0) > 0) bureaus.push('TransUnion');
-            const bureauConfig = bureaus.length > 0 ? bureaus.join(' + ') : 'N/A';
+            // Bureau config strings
+            const hpBureaus = [];
+            const spBureaus = [];
+            if ((v.efx_hp || 0) > 0) hpBureaus.push('EQ');
+            if ((v.exp_hp || 0) > 0) hpBureaus.push('EX');
+            if ((v.tu_hp || 0) > 0) hpBureaus.push('TU');
+            if ((v.efx_sp || 0) > 0) spBureaus.push('EQ');
+            if ((v.exp_sp || 0) > 0) spBureaus.push('EX');
+            if ((v.tu_sp || 0) > 0) spBureaus.push('TU');
+            const bureauShort = (spBureaus.length > 0 ? 'SP: ' + spBureaus.join(', ') : '') + (spBureaus.length > 0 && hpBureaus.length > 0 ? ' | ' : '') + (hpBureaus.length > 0 ? 'HP: ' + hpBureaus.join(', ') : '');
+
             const currentPkg = account ? (account.primary_product || 'Credit Solutions') : (pd.type === 'net_new' ? 'New Customer' : 'Unknown');
             const currentMrr = pd.currentMrr || 0;
             const vehicles = v.vehicles_sold || 0;
@@ -3220,156 +3272,164 @@
             const monthYear = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
             const displayName = (account && account.group) ? account.group : pd.name;
 
-            // Tier descriptions
-            const tierDesc = {
-                Protect: 'Credit bureau access with compliance suite, fraud protection, and DealerTrack integration.',
-                Enrich: 'Everything in Protect plus SmartPencil pre-desking and Informativ Payments.',
-                Elevate: 'Soft-pull bureau access with compliance, payments, and fraud protection for a streamlined customer experience.',
-                Control: 'Full hard and soft pull bureau access with SmartPencil, payments, compliance, and complete fraud prevention suite.'
-            };
-            // Tier features
-            const tierFeatures = {
-                Protect: ['Credit Bureau Access (Hard Pull)', 'Compliance Suite', 'DL Fraud Check', 'Synthetic ID Detection', 'DealerTrack Integration', 'Stipulation Management'],
-                Enrich: ['Everything in Protect', 'SmartPencil Pre-Desking', 'Informativ Payments'],
-                Elevate: ['Credit Bureau Access (Soft Pull)', 'Compliance Suite', 'Informativ Payments', 'DL Fraud Check', 'Synthetic ID Detection', 'DealerTrack Integration'],
-                Control: ['Hard + Soft Pull Bureau Access', 'SmartPencil Pre-Desking', 'Informativ Payments', 'Compliance Suite', 'DL Fraud Check', 'Synthetic ID Detection', 'Full Subcode Access', 'DealerTrack Integration']
+            // Tier includes (compact for table format)
+            const tierIncludes = {
+                Protect: 'Credit reporting, compliance, fraud prevention',
+                Enrich: 'Protect + SmartPencil pre-desking + Payments',
+                Elevate: 'Soft pull bureau + compliance + SmartPencil + Payments',
+                Control: 'Full HP + SP bureau suite + all products'
             };
 
-            // Build tier cards HTML
-            let tierCardsHtml = '';
-            tierData.forEach(td => {
-                const annual = td.price * 12;
-                const delta = currentMrr > 0 ? td.price - currentMrr : 0;
-                const features = tierFeatures[td.tier] || [];
-                tierCardsHtml += `
-                    <div style="border:2px solid ${td.isRec ? '#059669' : '#E2E8F0'};border-radius:12px;padding:24px;background:${td.isRec ? '#F0FDF4' : '#FFFFFF'};page-break-inside:avoid;">
-                        ${td.isRec ? '<div style="font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:#059669;font-weight:800;margin-bottom:8px;">&#9733; RECOMMENDED</div>' : ''}
-                        <div style="font-size:20px;font-weight:800;color:#1B2A4A;margin-bottom:4px;">${td.tier}</div>
-                        <div style="font-size:12px;color:#64748B;margin-bottom:16px;line-height:1.4;">${tierDesc[td.tier] || ''}</div>
-                        <div style="font-size:36px;font-weight:800;color:${td.isRec ? '#059669' : '#1B2A4A'};margin-bottom:4px;">$${td.price.toLocaleString()}<span style="font-size:14px;font-weight:500;color:#94A3B8;">/mo</span></div>
-                        <div style="font-size:13px;color:#64748B;margin-bottom:${currentMrr > 0 ? '8' : '20'}px;">$${annual.toLocaleString()} annually</div>
-                        ${currentMrr > 0 ? '<div style="font-size:13px;font-weight:700;color:' + (delta >= 0 ? '#059669' : '#DC2626') + ';margin-bottom:20px;">' + (delta >= 0 ? '+' : '') + '$' + Math.round(delta).toLocaleString() + '/mo vs current</div>' : ''}
-                        <div style="border-top:1px solid #E2E8F0;padding-top:16px;">
-                            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#94A3B8;font-weight:700;margin-bottom:10px;">INCLUDES</div>
-                            ${features.map(f => '<div style="font-size:12px;color:#334155;padding:4px 0;display:flex;align-items:center;gap:8px;"><span style="color:#059669;font-size:14px;">&#10003;</span>' + f + '</div>').join('')}
-                        </div>
-                    </div>`;
-            });
+            // Build recommended tier data for ROI
+            const recTierData = tierData.find(function(t) { return t.isRec; }) || tierData[0];
+            const recAnnual = recTierData.price * 12;
 
-            // Bureau detail table rows
-            let bureauRows = '';
+            // ROI Calculations (industry benchmarks)
+            const bureauSavings = totalSp > 0 ? Math.round(totalSp * 0.85 * 12) : Math.round(totalHp * 0.40 * 12);
+            const ftcComplianceAvoidance = 46517;
+            const fraudPrevention = 48699;
+            const smartPencilPVR = vehicles > 0 ? Math.round(100 * vehicles * 12) : 12000;
+            const conversionUplift = vehicles > 0 ? Math.round(vehicles * 0.02 * 47000 * 0.03 * 12) : 713;
+            const currentSpend = currentMrr > 0 ? currentMrr * 12 : 0;
+            const totalSavings = bureauSavings + ftcComplianceAvoidance + fraudPrevention + smartPencilPVR + conversionUplift + currentSpend;
+            const netSavingsY1 = totalSavings - recAnnual;
+            const roi = recAnnual > 0 ? Math.round((netSavingsY1 / recAnnual) * 100) : 0;
+            const paybackMonths = totalSavings > 0 ? (recAnnual / (totalSavings / 12)).toFixed(1) : '\u2014';
+
+            // Bureau detail rows (compact)
             const bdata = [
-                { name: 'Equifax', hp: v.efx_hp || 0, sp: v.efx_sp || 0 },
-                { name: 'Experian', hp: v.exp_hp || 0, sp: v.exp_sp || 0 },
-                { name: 'TransUnion', hp: v.tu_hp || 0, sp: v.tu_sp || 0 }
-            ].filter(b => b.hp > 0 || b.sp > 0);
-            bdata.forEach((b, i) => {
-                bureauRows += `<tr style="background:${i % 2 === 0 ? '#F8FAFC' : '#FFFFFF'};">
-                    <td style="padding:8px 16px;font-size:13px;color:#334155;font-weight:600;">${b.name}</td>
-                    <td style="padding:8px 16px;font-size:13px;color:#334155;text-align:center;">${b.hp > 0 ? b.hp.toLocaleString() : '—'}</td>
-                    <td style="padding:8px 16px;font-size:13px;color:#334155;text-align:center;">${b.sp > 0 ? b.sp.toLocaleString() : '—'}</td>
-                    <td style="padding:8px 16px;font-size:13px;color:#334155;text-align:center;font-weight:700;">${(b.hp + b.sp).toLocaleString()}</td>
-                </tr>`;
+                { name: 'Equifax (EQF)', hp: v.efx_hp || 0, sp: v.efx_sp || 0 },
+                { name: 'Experian (EXP)', hp: v.exp_hp || 0, sp: v.exp_sp || 0 },
+                { name: 'TransUnion (TU)', hp: v.tu_hp || 0, sp: v.tu_sp || 0 }
+            ].filter(function(b) { return b.hp > 0 || b.sp > 0; });
+            var bureauRows = '';
+            bdata.forEach(function(b, i) {
+                bureauRows += '<tr style="background:' + (i % 2 === 0 ? '#F8FAFC' : '#fff') + ';"><td style="padding:5px 12px;font-size:11px;color:#334155;font-weight:600;">' + b.name + '</td><td style="padding:5px 12px;font-size:11px;color:#334155;text-align:center;">' + (b.hp > 0 ? b.hp.toLocaleString() : '\u2014') + '</td><td style="padding:5px 12px;font-size:11px;color:#334155;text-align:center;">' + (b.sp > 0 ? b.sp.toLocaleString() : '\u2014') + '</td></tr>';
+            });
+            bureauRows += '<tr style="background:#F1F5F9;border-top:1px solid #CBD5E1;"><td style="padding:5px 12px;font-size:11px;color:#1B2A4A;font-weight:800;">TOTAL</td><td style="padding:5px 12px;font-size:11px;color:#1B2A4A;font-weight:800;text-align:center;">' + totalHp.toLocaleString() + '</td><td style="padding:5px 12px;font-size:11px;color:#1B2A4A;font-weight:800;text-align:center;">' + totalSp.toLocaleString() + '</td></tr>';
+
+            // Volume source label
+            var volLabel = isRepVerified ? 'Rep-verified volumes' : (isEstimate ? 'Estimated volumes' : 'Monthly averages based on 3-month trailing usage data.');
+
+            // Pricing table rows
+            var pricingRows = '';
+            tierData.forEach(function(td) {
+                var delta = currentMrr > 0 ? td.price - currentMrr : 0;
+                var deltaStr = currentMrr > 0 ? (delta === 0 ? 'No Change' : (delta > 0 ? '+' : '') + '$' + Math.round(delta).toLocaleString()) : '\u2014';
+                var isRec = td.isRec;
+                pricingRows += '<tr style="background:' + (isRec ? '#F0FDF4' : '#fff') + ';' + (isRec ? 'border-left:3px solid #059669;' : '') + '">' +
+                    '<td style="padding:10px 12px;font-weight:800;font-size:12px;color:#1B2A4A;">' + td.tier + (isRec ? '&nbsp;&nbsp;<span style="font-size:9px;color:#059669;font-weight:800;vertical-align:middle;">&#9733; RECOMMENDED</span>' : '') + '</td>' +
+                    '<td style="padding:10px 12px;font-size:11px;color:#64748B;">' + (tierIncludes[td.tier] || '') + '</td>' +
+                    '<td style="padding:10px 12px;font-size:13px;font-weight:800;color:' + (isRec ? '#059669' : '#1B2A4A') + ';text-align:right;font-variant-numeric:tabular-nums;">$' + td.price.toLocaleString() + '</td>' +
+                    '<td style="padding:10px 12px;font-size:11px;font-weight:700;text-align:center;color:' + (delta > 0 ? '#059669' : delta < 0 ? '#DC2626' : '#64748B') + ';">' + deltaStr + '</td></tr>';
             });
 
-            // Full HTML document
-            const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>${displayName} - Pricing Review</title>
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; color: #1E293B; background: #FFFFFF; }
-    @media print {
-        body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        .no-print { display: none !important; }
-        .page-break { page-break-before: always; }
-    }
-</style>
-</head>
-<body>
-    <!-- Print button -->
-    <div class="no-print" style="position:fixed;top:20px;right:20px;z-index:100;display:flex;gap:8px;">
-        <button onclick="window.print()" style="padding:10px 24px;background:#059669;color:white;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-            Print / Save as PDF
-        </button>
-    </div>
+            // ROI savings items
+            var roiItems = [
+                { cat: 'Credit Bureau Savings', desc: totalSp > 0 ? 'Soft pull migration reduces per-pull cost' : 'Bureau consolidation efficiency', val: bureauSavings },
+                { cat: 'Fraud Prevention Savings', desc: 'Avg. fraud event cost avoidance per rooftop', val: fraudPrevention },
+                { cat: 'FTC Compliance Risk Avoidance', desc: 'Estimated exposure per violation', val: ftcComplianceAvoidance },
+                { cat: 'Customer Insights Conversion Uplift', desc: vehicles > 0 ? Math.round(vehicles * 0.02 * 12) + ' incremental deals/yr from pre-qualification' : 'Pre-qualification conversion improvement', val: conversionUplift },
+                { cat: 'SmartPencil PVR Improvement', desc: '$100/deal \u00d7 ' + (vehicles > 0 ? vehicles : 100) + ' vehicles/mo \u00d7 12 months', val: smartPencilPVR }
+            ];
+            if (currentSpend > 0) {
+                roiItems.push({ cat: 'Current Credit & Compliance Spend', desc: 'Existing vendor costs replaced by Informativ', val: currentSpend });
+            }
+            // Build ROI detail rows (2 items per row)
+            var roiDetailRows = '';
+            for (var ri = 0; ri < roiItems.length; ri += 2) {
+                var left = roiItems[ri];
+                var right = roiItems[ri + 1];
+                roiDetailRows += '<tr style="border-top:1px solid #F1F5F9;">';
+                roiDetailRows += '<td style="padding:6px 10px;border-right:1px solid #E2E8F0;vertical-align:top;"><div style="font-size:10px;font-weight:700;color:#1B2A4A;">' + left.cat + '</div><div style="font-size:9px;color:#94A3B8;margin-top:1px;">' + left.desc + '</div></td>';
+                roiDetailRows += '<td style="padding:6px 10px;font-size:11px;font-weight:800;color:#1B2A4A;text-align:right;border-right:1px solid #E2E8F0;vertical-align:top;font-variant-numeric:tabular-nums;">$' + left.val.toLocaleString() + '</td>';
+                if (right) {
+                    roiDetailRows += '<td style="padding:6px 10px;border-right:1px solid #E2E8F0;vertical-align:top;"><div style="font-size:10px;font-weight:700;color:#1B2A4A;">' + right.cat + '</div><div style="font-size:9px;color:#94A3B8;margin-top:1px;">' + right.desc + '</div></td>';
+                    roiDetailRows += '<td style="padding:6px 10px;font-size:11px;font-weight:800;color:#1B2A4A;text-align:right;vertical-align:top;font-variant-numeric:tabular-nums;">$' + right.val.toLocaleString() + '</td>';
+                } else {
+                    roiDetailRows += '<td style="padding:6px 10px;border-right:1px solid #E2E8F0;"></td><td style="padding:6px 10px;"></td>';
+                }
+                roiDetailRows += '</tr>';
+            }
 
-    <div style="max-width:900px;margin:0 auto;padding:40px;">
+            // Full one-pager HTML
+            const html = '<!DOCTYPE html>\n<html lang="en"><head><meta charset="UTF-8"><title>' + displayName + ' - Pricing Review</title>' +
+                '<style>@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");' +
+                '*{margin:0;padding:0;box-sizing:border-box;}body{font-family:"Plus Jakarta Sans",-apple-system,sans-serif;color:#1E293B;background:#fff;}' +
+                '@page{size:letter;margin:0.4in 0.5in;}@media print{body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}.no-print{display:none!important;}}' +
+                'table{border-collapse:collapse;}</style></head><body>' +
+                '<div class="no-print" style="position:fixed;top:16px;right:16px;z-index:100;"><button onclick="window.print()" style="padding:8px 20px;background:#059669;color:white;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;">Print / Save as PDF</button></div>' +
+                '<div style="max-width:820px;margin:0 auto;padding:24px 32px;">' +
 
-        <!-- Header -->
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:24px;border-bottom:3px solid #1B2A4A;">
-            <div>
-                <div style="font-size:28px;font-weight:800;color:#1B2A4A;letter-spacing:-0.02em;">${displayName.toUpperCase()}</div>
-                <div style="font-size:14px;color:#64748B;margin-top:4px;">Pricing Review for ${pd.name}</div>
-            </div>
-            <div style="text-align:right;">
-                <div style="font-size:20px;font-weight:800;color:#1B2A4A;">informativ</div>
-                <div style="font-size:12px;color:#64748B;">${monthYear}</div>
-            </div>
-        </div>
+                // Header
+                '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:12px;border-bottom:3px solid #1B2A4A;">' +
+                '<div><div style="font-size:22px;font-weight:800;color:#1B2A4A;letter-spacing:-0.02em;">' + displayName.toUpperCase() + '</div>' +
+                '<div style="font-size:12px;color:#64748B;margin-top:2px;">Pricing Review for ' + pd.name + '</div></div>' +
+                '<div style="text-align:right;"><div style="font-size:17px;font-weight:800;color:#1B2A4A;">informativ</div>' +
+                '<div style="font-size:11px;color:#64748B;">' + monthYear + '</div></div></div>' +
 
-        <!-- Current Account Summary -->
-        <div style="margin-bottom:32px;">
-            <div style="font-size:13px;text-transform:uppercase;letter-spacing:0.1em;color:#1B2A4A;font-weight:800;margin-bottom:16px;">Current Account</div>
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#E2E8F0;border-radius:10px;overflow:hidden;">
-                <div style="background:#F8FAFC;padding:16px;">
-                    <div style="font-size:11px;color:#64748B;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Current Investment</div>
-                    <div style="font-size:22px;font-weight:800;color:#1B2A4A;">${currentMrr > 0 ? '$' + currentMrr.toLocaleString() : 'N/A'}<span style="font-size:12px;color:#94A3B8;">/mo</span></div>
-                </div>
-                <div style="background:#F8FAFC;padding:16px;">
-                    <div style="font-size:11px;color:#64748B;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Current Package</div>
-                    <div style="font-size:18px;font-weight:800;color:#1B2A4A;">${currentPkg}</div>
-                </div>
-                <div style="background:#F8FAFC;padding:16px;">
-                    <div style="font-size:11px;color:#64748B;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Bureau Configuration</div>
-                    <div style="font-size:16px;font-weight:700;color:#1B2A4A;">${bureauConfig}</div>
-                </div>
-                <div style="background:#F8FAFC;padding:16px;">
-                    <div style="font-size:11px;color:#64748B;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Monthly Pull Volume</div>
-                    <div style="font-size:18px;font-weight:800;color:#1B2A4A;">${totalHp > 0 ? totalHp.toLocaleString() + ' HP' : ''}${totalHp > 0 && totalSp > 0 ? ' / ' : ''}${totalSp > 0 ? totalSp.toLocaleString() + ' SP' : ''}</div>
-                </div>
-            </div>
-        </div>
+                // Current Account Strip
+                '<div style="margin-bottom:14px;">' +
+                '<div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#1B2A4A;font-weight:800;margin-bottom:8px;">Current Account</div>' +
+                '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#E2E8F0;border-radius:8px;overflow:hidden;">' +
+                '<div style="background:#F8FAFC;padding:10px 12px;"><div style="font-size:9px;color:#64748B;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px;">Current Monthly Investment</div><div style="font-size:16px;font-weight:800;color:#1B2A4A;">' + (currentMrr > 0 ? '$' + currentMrr.toLocaleString() : 'N/A') + '</div></div>' +
+                '<div style="background:#F8FAFC;padding:10px 12px;"><div style="font-size:9px;color:#64748B;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px;">Current Package</div><div style="font-size:14px;font-weight:800;color:#1B2A4A;">' + currentPkg + '</div></div>' +
+                '<div style="background:#F8FAFC;padding:10px 12px;"><div style="font-size:9px;color:#64748B;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px;">Bureau Configuration</div><div style="font-size:12px;font-weight:700;color:#1B2A4A;">' + (bureauShort || 'N/A') + '</div></div>' +
+                '<div style="background:#F8FAFC;padding:10px 12px;"><div style="font-size:9px;color:#64748B;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px;">Monthly Pull Volume</div><div style="font-size:15px;font-weight:800;color:#1B2A4A;">' + (totalHp > 0 ? totalHp.toLocaleString() + ' HP' : '') + (totalHp > 0 && totalSp > 0 ? ' / ' : '') + (totalSp > 0 ? totalSp.toLocaleString() + ' SP' : '') + '</div></div>' +
+                '</div></div>' +
 
-        <!-- Bureau Detail -->
-        ${bdata.length > 0 ? `
-        <div style="margin-bottom:32px;">
-            <div style="font-size:13px;text-transform:uppercase;letter-spacing:0.1em;color:#1B2A4A;font-weight:800;margin-bottom:12px;">Bureau Usage Detail</div>
-            <table style="width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden;border:1px solid #E2E8F0;">
-                <thead>
-                    <tr style="background:#1B2A4A;">
-                        <th style="padding:10px 16px;font-size:11px;color:white;text-align:left;text-transform:uppercase;letter-spacing:0.08em;">Bureau</th>
-                        <th style="padding:10px 16px;font-size:11px;color:white;text-align:center;text-transform:uppercase;letter-spacing:0.08em;">Hard Pulls</th>
-                        <th style="padding:10px 16px;font-size:11px;color:white;text-align:center;text-transform:uppercase;letter-spacing:0.08em;">Soft Pulls</th>
-                        <th style="padding:10px 16px;font-size:11px;color:white;text-align:center;text-transform:uppercase;letter-spacing:0.08em;">Total</th>
-                    </tr>
-                </thead>
-                <tbody>${bureauRows}</tbody>
-            </table>
-            ${vehicles > 0 ? '<div style="font-size:12px;color:#64748B;margin-top:8px;">Estimated monthly vehicles sold: ' + vehicles.toLocaleString() + '</div>' : ''}
-        </div>` : ''}
+                // Bureau Usage Detail
+                (bdata.length > 0 ? '<div style="margin-bottom:14px;">' +
+                '<div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#1B2A4A;font-weight:800;margin-bottom:6px;">Bureau Usage Detail</div>' +
+                '<table style="width:100%;border:1px solid #E2E8F0;border-radius:8px;overflow:hidden;"><thead><tr style="background:#1B2A4A;">' +
+                '<th style="padding:5px 12px;font-size:9px;color:white;text-align:left;text-transform:uppercase;letter-spacing:0.08em;">Bureau</th>' +
+                '<th style="padding:5px 12px;font-size:9px;color:white;text-align:center;text-transform:uppercase;letter-spacing:0.08em;">Hard Pulls / Mo</th>' +
+                '<th style="padding:5px 12px;font-size:9px;color:white;text-align:center;text-transform:uppercase;letter-spacing:0.08em;">Soft Pulls / Mo</th>' +
+                '</tr></thead><tbody>' + bureauRows + '</tbody></table>' +
+                '<div style="font-size:10px;color:#94A3B8;margin-top:4px;font-style:italic;">' + volLabel + (vehicles > 0 ? ' \u00b7 ' + vehicles.toLocaleString() + ' vehicles sold/mo' : '') + '</div></div>' : '') +
 
-        <!-- Tier Options -->
-        <div style="margin-bottom:32px;">
-            <div style="font-size:13px;text-transform:uppercase;letter-spacing:0.1em;color:#1B2A4A;font-weight:800;margin-bottom:16px;">Investment Options</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-                ${tierCardsHtml}
-            </div>
-        </div>
+                // Pricing Options
+                '<div style="margin-bottom:14px;">' +
+                '<div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#1B2A4A;font-weight:800;margin-bottom:4px;">Pricing Options</div>' +
+                '<div style="font-size:10px;color:#64748B;margin-bottom:8px;">' + (isRepVerified ? 'Based on rep-verified volumes' : isEstimate ? 'Based on estimated volumes' : 'Based on your actual usage data') + ', we recommend the highlighted package below.</div>' +
+                '<table style="width:100%;border:1px solid #E2E8F0;border-radius:8px;overflow:hidden;"><thead><tr style="background:#1B2A4A;">' +
+                '<th style="padding:8px 12px;font-size:9px;color:white;text-align:left;text-transform:uppercase;letter-spacing:0.08em;">Package</th>' +
+                '<th style="padding:8px 12px;font-size:9px;color:white;text-align:left;text-transform:uppercase;letter-spacing:0.08em;">Includes</th>' +
+                '<th style="padding:8px 12px;font-size:9px;color:white;text-align:right;text-transform:uppercase;letter-spacing:0.08em;">Monthly Investment</th>' +
+                '<th style="padding:8px 12px;font-size:9px;color:white;text-align:center;text-transform:uppercase;letter-spacing:0.08em;">vs. Current</th>' +
+                '</tr></thead><tbody>' + pricingRows + '</tbody></table>' +
+                // Summary bar
+                '<div style="background:#F0FDF4;border:1px solid #A7F3D0;border-radius:8px;padding:8px 14px;margin-top:8px;display:flex;justify-content:space-between;align-items:center;">' +
+                '<div style="font-size:11px;font-weight:700;color:#065F46;">Your New Annual Investment: $' + recAnnual.toLocaleString() + '</div>' +
+                '<div style="font-size:10px;color:#065F46;">' + recTierData.tier + ' Package' + (vehicles > 0 ? '  |  ' + vehicles.toLocaleString() + ' Vehicles/Mo' : '') + '  |  ' + (totalSp > 0 ? totalSp.toLocaleString() + ' Soft Pulls' : totalHp.toLocaleString() + ' Hard Pulls') + '</div>' +
+                '</div></div>' +
 
-        <!-- Footer -->
-        <div style="border-top:2px solid #E2E8F0;padding-top:20px;text-align:center;">
-            <div style="font-size:12px;color:#94A3B8;">Prepared for ${pd.name}, ${displayName} &nbsp;|&nbsp; ${monthYear}</div>
-            <div style="font-size:11px;color:#CBD5E1;margin-top:4px;">Pricing is based on estimated monthly bureau volumes and is subject to final review.</div>
-        </div>
+                // ROI Calculator
+                '<div style="margin-bottom:14px;">' +
+                '<div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#1B2A4A;font-weight:800;margin-bottom:8px;">Estimated Return on Investment</div>' +
+                // ROI headline KPIs
+                '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#E2E8F0;border-radius:8px;overflow:hidden;margin-bottom:10px;">' +
+                '<div style="background:#F0FDF4;padding:10px 12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#059669;">$' + totalSavings.toLocaleString() + '</div><div style="font-size:9px;color:#065F46;font-weight:600;margin-top:2px;">Est. Annual Savings</div></div>' +
+                '<div style="background:#F0FDF4;padding:10px 12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#059669;">$' + netSavingsY1.toLocaleString() + '</div><div style="font-size:9px;color:#065F46;font-weight:600;margin-top:2px;">Net Savings (Year 1)</div></div>' +
+                '<div style="background:#F0FDF4;padding:10px 12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#059669;">' + roi + '%</div><div style="font-size:9px;color:#065F46;font-weight:600;margin-top:2px;">Return on Investment</div></div>' +
+                '<div style="background:#F0FDF4;padding:10px 12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#059669;">' + paybackMonths + ' mo</div><div style="font-size:9px;color:#065F46;font-weight:600;margin-top:2px;">Payback Period</div></div></div>' +
+                // ROI detail table
+                '<table style="width:100%;border:1px solid #E2E8F0;border-radius:8px;overflow:hidden;"><thead><tr style="background:#F8FAFC;">' +
+                '<th style="padding:5px 10px;font-size:9px;color:#64748B;text-align:left;text-transform:uppercase;border-right:1px solid #E2E8F0;">Savings Category</th>' +
+                '<th style="padding:5px 10px;font-size:9px;color:#64748B;text-align:right;text-transform:uppercase;border-right:1px solid #E2E8F0;">Est. Value</th>' +
+                '<th style="padding:5px 10px;font-size:9px;color:#64748B;text-align:left;text-transform:uppercase;border-right:1px solid #E2E8F0;">Savings Category</th>' +
+                '<th style="padding:5px 10px;font-size:9px;color:#64748B;text-align:right;text-transform:uppercase;">Est. Value</th>' +
+                '</tr></thead><tbody>' + roiDetailRows + '</tbody></table></div>' +
 
-    </div>
-</body>
-</html>`;
+                // Footer
+                '<div style="border-top:1px solid #E2E8F0;padding-top:8px;">' +
+                '<div style="font-size:9px;color:#94A3B8;line-height:1.5;"><strong>Sources:</strong> Informativ internal bureau rate analysis &middot; Cox Automotive, 2024 avg. new vehicle transaction price &middot; FTC.gov, adjusted civil penalty amount (2024) &middot; NADA Workforce Study; Informativ internal pre-qualification data &middot; JD Power 2024 F&amp;I Study; NADA average back-end gross benchmarks' + (currentMrr > 0 ? ' &middot; Customer current MRR' : '') + '</div>' +
+                '<div style="font-size:9px;color:#CBD5E1;margin-top:3px;">ROI estimates are based on industry benchmarks and conservative assumptions. Actual results may vary based on dealership operations and market conditions.</div>' +
+                '<div style="font-size:9px;color:#CBD5E1;margin-top:2px;">All prices are monthly flat rates  |  ' + monthYear + '  |  Confidential</div>' +
+                (isEstimate ? '<div style="font-size:9px;color:#CBD5E1;margin-top:2px;">*Pricing is based on estimated monthly bureau volumes and is subject to final review.</div>' : '') +
+                '</div>' +
+
+                '</div></body></html>';
 
             // Open in new tab
             const win = window.open('', '_blank');
@@ -3382,7 +3442,7 @@
             } else {
                 btn.innerHTML = origHtml;
                 btn.disabled = false;
-                alert('Pop-up blocked — please allow pop-ups for this page and try again.');
+                alert('Pop-up blocked \u2014 please allow pop-ups for this page and try again.');
             }
         }
 
