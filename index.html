@@ -1773,8 +1773,41 @@
             };
         }
 
+        // ===== RESTORE STATE FROM FEEDBACK HISTORY =====
+        function restoreProspectState() {
+            // Restore flagged-as-customer and reassignment state from feedbackHistory
+            feedbackHistory.forEach(fb => {
+                const name = (fb.prospectName || '').toLowerCase().trim();
+                const type = fb.prospectType;
+                if (!name || !type) return;
+
+                // Restore flag-as-customer
+                if (fb.disposition === 'Already a Customer' || fb.disposition === 'Already Upgraded') {
+                    if (type === 'net_new') {
+                        const p = allNetNewProspects.find(pr => (pr.company_name || '').toLowerCase().trim() === name);
+                        if (p) p._flaggedCustomer = true;
+                    } else if (type === 'cross_sell') {
+                        const a = allCrossSellAccounts.find(ac => (ac.account_name || '').toLowerCase().trim() === name);
+                        if (a) a._flaggedCustomer = true;
+                    }
+                }
+
+                // Restore reassignments (last reassignment wins)
+                if (fb.disposition === 'Reassigned' && fb.assignedRep) {
+                    if (type === 'net_new') {
+                        const p = allNetNewProspects.find(pr => (pr.company_name || '').toLowerCase().trim() === name);
+                        if (p) p.assigned_rep = fb.assignedRep;
+                    } else if (type === 'cross_sell') {
+                        const a = allCrossSellAccounts.find(ac => (ac.account_name || '').toLowerCase().trim() === name);
+                        if (a) a.assigned_rep = fb.assignedRep;
+                    }
+                }
+            });
+        }
+
         // ===== INITIALIZATION =====
         let pieData = loadPIEData();
+        restoreProspectState();
 
         document.addEventListener('DOMContentLoaded', function() {
             initializeSelects();
@@ -1927,8 +1960,9 @@
         function applyFilters() {
             const repFilter = document.getElementById('repFilter').value;
 
-            // Apply to net-new
+            // Apply to net-new (exclude flagged-as-customer prospects)
             filteredNetNewProspects = allNetNewProspects.filter(p => {
+                if (p._flaggedCustomer) return false;
                 if (repFilter !== 'all' && p.assigned_rep !== repFilter) return false;
                 return true;
             });
@@ -1956,6 +1990,7 @@
             const threeBureau = document.getElementById('crosssell3BureauFilter').checked;
 
             let crosssell = allCrossSellAccounts.filter(a => {
+                if (a._flaggedCustomer) return false;
                 if (repFilter !== 'all' && a.assigned_rep !== repFilter) return false;
                 if (csTerritory && a.territory !== csTerritory) return false;
                 if (csTier && a.recommended_tier !== csTier) return false;
@@ -1970,6 +2005,7 @@
             const searchTerm = document.getElementById('proximitySearch').value.toLowerCase();
 
             let proximity = allNetNewProspects.filter(p => {
+                if (p._flaggedCustomer) return false;
                 if (repFilter !== 'all' && p.assigned_rep !== repFilter) return false;
                 if (searchTerm && !p.company_name.toLowerCase().includes(searchTerm) && !p.territory.toLowerCase().includes(searchTerm)) return false;
                 if (!p.reference_accounts || p.reference_accounts.length === 0) return false;
@@ -1984,8 +2020,8 @@
 
         function renderTerritoryOverview() {
             const repFilter = document.getElementById('repFilter').value;
-            let filtered = repFilter === 'all' ? allNetNewProspects : allNetNewProspects.filter(p => p.assigned_rep === repFilter);
-            let crosssellFiltered = repFilter === 'all' ? allCrossSellAccounts : allCrossSellAccounts.filter(a => a.assigned_rep === repFilter);
+            let filtered = (repFilter === 'all' ? allNetNewProspects : allNetNewProspects.filter(p => p.assigned_rep === repFilter)).filter(p => !p._flaggedCustomer);
+            let crosssellFiltered = (repFilter === 'all' ? allCrossSellAccounts : allCrossSellAccounts.filter(a => a.assigned_rep === repFilter)).filter(a => !a._flaggedCustomer);
 
             const total = filtered.length + crosssellFiltered.length;
             const avgScore = filtered.length > 0 ? (filtered.reduce((sum, p) => sum + p.icp_score, 0) / filtered.length).toFixed(1) : '0';
@@ -2286,7 +2322,19 @@
                     ${buildInlineDispositionForm(allNetNewProspects.indexOf(prospect), 'net_new')}
                 </div>
 
-                <div style="margin-top: var(--sp-4);">
+                <div style="margin-top: var(--sp-3); display:flex; gap:8px;">
+                    <button onclick="showReassignOwner(${allNetNewProspects.indexOf(prospect)}, 'net_new')" style="flex:1; background:white; color:var(--slate-700); border:1px solid var(--border); padding:10px 12px; border-radius:var(--radius-md); font-weight:700; font-size:12px; cursor:pointer; font-family:var(--font-body); display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--slate-700)'">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+                        Reassign Owner
+                    </button>
+                    <button onclick="flagAsCustomer(${allNetNewProspects.indexOf(prospect)}, 'net_new')" style="flex:1; background:white; color:var(--slate-700); border:1px solid var(--border); padding:10px 12px; border-radius:var(--radius-md); font-weight:700; font-size:12px; cursor:pointer; font-family:var(--font-body); display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.borderColor='#D97706';this.style.color='#D97706'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--slate-700)'">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                        Flag as Customer
+                    </button>
+                </div>
+                <div id="reassignContainer_net_new_${allNetNewProspects.indexOf(prospect)}" style="display:none;"></div>
+
+                <div style="margin-top: var(--sp-3);">
                     <div style="display:flex;gap:8px;">
                         <button onclick="launchChuck(${allNetNewProspects.indexOf(prospect)}, 'net_new')" style="flex:1; background: linear-gradient(135deg, var(--navy-900), var(--accent)); color: white; border: none; padding: 12px 16px; border-radius: var(--radius-md); font-weight: 700; font-size: var(--text-sm); cursor: pointer; font-family: var(--font-display); display: flex; align-items: center; justify-content: center; gap: 6px;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
@@ -2394,7 +2442,19 @@
                     ${buildInlineDispositionForm(allCrossSellAccounts.indexOf(account), 'cross_sell')}
                 </div>
 
-                <div style="margin-top: var(--sp-4);">
+                <div style="margin-top: var(--sp-3); display:flex; gap:8px;">
+                    <button onclick="showReassignOwner(${allCrossSellAccounts.indexOf(account)}, 'cross_sell')" style="flex:1; background:white; color:var(--slate-700); border:1px solid var(--border); padding:10px 12px; border-radius:var(--radius-md); font-weight:700; font-size:12px; cursor:pointer; font-family:var(--font-body); display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--slate-700)'">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+                        Reassign Owner
+                    </button>
+                    <button onclick="flagAsCustomer(${allCrossSellAccounts.indexOf(account)}, 'cross_sell')" style="flex:1; background:white; color:var(--slate-700); border:1px solid var(--border); padding:10px 12px; border-radius:var(--radius-md); font-weight:700; font-size:12px; cursor:pointer; font-family:var(--font-body); display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.borderColor='#D97706';this.style.color='#D97706'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--slate-700)'">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                        Flag as Customer
+                    </button>
+                </div>
+                <div id="reassignContainer_cross_sell_${allCrossSellAccounts.indexOf(account)}" style="display:none;"></div>
+
+                <div style="margin-top: var(--sp-3);">
                     <button onclick="generatePricing(${allCrossSellAccounts.indexOf(account)}, 'cross_sell')" style="width: 100%; background: linear-gradient(135deg, #059669, #10B981); color: white; border: none; padding: 12px 16px; border-radius: var(--radius-md); font-weight: 700; font-size: var(--text-sm); cursor: pointer; font-family: var(--font-display); display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                         Generate Pricing
@@ -2624,6 +2684,138 @@
             }, 2000);
 
             loadFeedbackHistory();
+        }
+
+        // ===== REASSIGN OWNER =====
+        function showReassignOwner(index, type) {
+            const prospect = type === 'cross_sell' ? allCrossSellAccounts[index] : allNetNewProspects[index];
+            const currentRep = prospect.assigned_rep;
+            const prospectName = prospect.company_name || prospect.account_name;
+            const container = document.getElementById('reassignContainer_' + type + '_' + index);
+            if (!container) return;
+
+            // Toggle: if already showing, hide it
+            if (container.style.display === 'block') { container.style.display = 'none'; return; }
+
+            const otherReps = reps.filter(r => r !== currentRep);
+            container.innerHTML =
+                '<div style="background:var(--slate-50);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px;margin-top:8px;">' +
+                    '<div style="font-size:11px;font-weight:700;color:var(--slate-600);margin-bottom:6px;">Reassign to:</div>' +
+                    '<select id="reassignSelect_' + type + '_' + index + '" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-md);font-size:var(--text-sm);font-family:var(--font-body);background:white;margin-bottom:8px;">' +
+                        '<option value="">Select rep...</option>' +
+                        otherReps.map(r => '<option value="' + r + '">' + r + '</option>').join('') +
+                    '</select>' +
+                    '<div style="display:flex;gap:6px;">' +
+                        '<button onclick="confirmReassign(' + index + ',\'' + type + '\')" style="flex:1;background:var(--accent);color:white;border:none;padding:8px 12px;border-radius:var(--radius-md);font-weight:700;font-size:12px;cursor:pointer;font-family:var(--font-body);">Confirm</button>' +
+                        '<button onclick="document.getElementById(\'reassignContainer_' + type + '_' + index + '\').style.display=\'none\'" style="flex:1;background:white;color:var(--slate-600);border:1px solid var(--border);padding:8px 12px;border-radius:var(--radius-md);font-weight:600;font-size:12px;cursor:pointer;font-family:var(--font-body);">Cancel</button>' +
+                    '</div>' +
+                '</div>';
+            container.style.display = 'block';
+        }
+
+        function confirmReassign(index, type) {
+            const select = document.getElementById('reassignSelect_' + type + '_' + index);
+            const newRep = select ? select.value : '';
+            if (!newRep) { alert('Please select a rep'); return; }
+
+            const prospect = type === 'cross_sell' ? allCrossSellAccounts[index] : allNetNewProspects[index];
+            const prospectName = prospect.company_name || prospect.account_name;
+            const oldRep = prospect.assigned_rep;
+            const oldTerritory = prospect.territory;
+
+            // Update the in-memory prospect
+            prospect.assigned_rep = newRep;
+
+            // Log as a disposition event so it shows in feedback history
+            const feedback = {
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toISOString(),
+                prospectName: prospectName,
+                mcid: prospect.mcid || '',
+                prospectType: type,
+                territory: prospect.territory,
+                assignedRep: newRep,
+                disposition: 'Reassigned',
+                leadRating: '-',
+                vehiclesSold: '-', hardPulls: '-', softPulls: '-',
+                crm: '-', dms: '-', los: '-',
+                creditProvider: '-', complianceProvider: '-',
+                notes: 'Reassigned from ' + oldRep + ' to ' + newRep + ' (Strategic account)',
+                score: type === 'net_new' ? prospect.icp_score : prospect.revenue_potential_score,
+                tier: prospect.recommended_tier
+            };
+            upsertFeedback(feedback);
+            syncDispositionToShared(feedback);
+            trackPieEvent('prospect_reassigned', { prospect: prospectName, from_rep: oldRep, to_rep: newRep, type: type });
+
+            // Close panel, refresh view
+            closeDetailPanel();
+            applyFilters();
+            loadFeedbackHistory();
+
+            // Toast confirmation
+            showPieToast(prospectName + ' reassigned to ' + newRep);
+        }
+
+        // ===== FLAG AS EXISTING CUSTOMER =====
+        function flagAsCustomer(index, type) {
+            const prospect = type === 'cross_sell' ? allCrossSellAccounts[index] : allNetNewProspects[index];
+            const prospectName = prospect.company_name || prospect.account_name;
+            const dispValue = type === 'cross_sell' ? 'Already Upgraded' : 'Already a Customer';
+
+            if (!confirm('Flag "' + prospectName + '" as an existing customer?\n\nThis will remove them from your active pipeline.')) return;
+
+            // Mark prospect as flagged (used by applyFilters to exclude)
+            prospect._flaggedCustomer = true;
+
+            // Log disposition
+            const feedback = {
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toISOString(),
+                prospectName: prospectName,
+                mcid: prospect.mcid || '',
+                prospectType: type,
+                territory: prospect.territory,
+                assignedRep: prospect.assigned_rep,
+                disposition: dispValue,
+                leadRating: '-',
+                vehiclesSold: '-', hardPulls: '-', softPulls: '-',
+                crm: '-', dms: '-', los: '-',
+                creditProvider: '-', complianceProvider: '-',
+                notes: 'Flagged as existing customer by rep — removed from pipeline',
+                score: type === 'net_new' ? prospect.icp_score : prospect.revenue_potential_score,
+                tier: prospect.recommended_tier
+            };
+            upsertFeedback(feedback);
+            syncDispositionToShared(feedback);
+            trackPieEvent('flagged_as_customer', { prospect: prospectName, type: type, rep: prospect.assigned_rep });
+
+            // Close panel, refresh view (flagged prospects will be filtered out)
+            closeDetailPanel();
+            applyFilters();
+            loadFeedbackHistory();
+
+            showPieToast(prospectName + ' flagged as customer and removed from pipeline');
+        }
+
+        // ===== TOAST NOTIFICATION =====
+        function showPieToast(message) {
+            let toast = document.getElementById('pieToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'pieToast';
+                toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy-900);color:white;padding:12px 24px;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:600;font-family:var(--font-body);z-index:10000;box-shadow:0 8px 32px rgba(0,0,0,0.25);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1),opacity 0.3s;opacity:0;pointer-events:none;';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = message;
+            requestAnimationFrame(() => {
+                toast.style.transform = 'translateX(-50%) translateY(0)';
+                toast.style.opacity = '1';
+                setTimeout(() => {
+                    toast.style.transform = 'translateX(-50%) translateY(80px)';
+                    toast.style.opacity = '0';
+                }, 3000);
+            });
         }
 
         function launchChuck(index, type) {
@@ -3747,7 +3939,7 @@
                 'Meeting Scheduled': 'var(--accent)', 'Demo Scheduled': '#8B5CF6', 'Pricing Sent': 'var(--warning)',
                 'Closed Won': 'var(--success)', 'Closed Lost': 'var(--danger)', 'Not a Fit': 'var(--slate-500)',
                 'Bad Data - Wrong Contact': 'var(--slate-400)', 'Bad Data - Wrong Number': 'var(--slate-400)',
-                'Already a Customer': 'var(--slate-500)', 'Already Upgraded': 'var(--slate-500)', 'Duplicate': 'var(--slate-400)',
+                'Already a Customer': 'var(--slate-500)', 'Already Upgraded': 'var(--slate-500)', 'Reassigned': '#7C3AED', 'Duplicate': 'var(--slate-400)',
                 // Legacy values (backward compat)
                 'Contacted': 'var(--info)', 'Not Interested': 'var(--slate-500)', 'Bad Data': 'var(--slate-400)',
                 'Proposal Sent': 'var(--warning)', 'Wrong Contact': 'var(--slate-400)', 'Already Customer': 'var(--slate-500)', 'Deferred': 'var(--slate-500)'
