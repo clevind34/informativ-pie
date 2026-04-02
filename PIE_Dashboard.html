@@ -1556,7 +1556,7 @@
                             <button class="ua-range-btn" onclick="setUsageRange(14)" id="uaRange14">14 Days</button>
                             <button class="ua-range-btn" onclick="setUsageRange(30)" id="uaRange30">30 Days</button>
                             <button class="ua-range-btn" onclick="setUsageRange(0)" id="uaRange0">All Time</button>
-                            <button onclick="loadUsageData()" style="margin-left:auto;padding:6px 14px;background:var(--slate-100);border:1px solid var(--border);border-radius:var(--radius-md);font-size:var(--text-xs);font-weight:600;color:var(--slate-600);cursor:pointer;font-family:var(--font-display);">↻ Refresh</button>
+                            <button id="uaRefreshBtn" onclick="loadUsageData()" style="margin-left:auto;padding:6px 14px;background:var(--slate-100);border:1px solid var(--border);border-radius:var(--radius-md);font-size:var(--text-xs);font-weight:600;color:var(--slate-600);cursor:pointer;font-family:var(--font-display);transition:all 150ms ease;">↻ Refresh</button>
                         </div>
 
                         <!-- KPI Strip -->
@@ -1815,9 +1815,12 @@
             setupEventListeners();
             loadFeedbackHistory();
 
-            // Track page load after rep is selected (deferred to capture rep filter state)
+            // Track page load on initial visit (captures session even without rep selection)
+            trackPieEvent('page_load', { rep_selected: 'all', initial: true });
+
+            // Track rep selection changes
             document.getElementById('repFilter').addEventListener('change', function() {
-                if (this.value !== 'all') trackPieEvent('page_load', { rep_selected: this.value });
+                trackPieEvent('page_load', { rep_selected: this.value });
             });
 
             // Click-outside to close detail panel
@@ -4003,7 +4006,9 @@
             // Get currently selected rep (from header filter)
             const repFilter = document.getElementById('repFilter');
             const rep = repFilter ? repFilter.value : 'unknown';
-            if (rep === 'all' || rep === 'unknown') return; // Don't track when no rep selected
+            // Allow page_load and tab_switch to track with "all" so session counts accumulate
+            // Other events (detail_view, disposition, pricing) still require a specific rep
+            if ((rep === 'all' || rep === 'unknown') && eventType !== 'page_load' && eventType !== 'tab_switch') return;
 
             const payload = {
                 rep: rep,
@@ -4045,14 +4050,25 @@
         }
 
         function loadUsageData() {
-            // Try to fetch from Netlify function
+            const btn = document.getElementById('uaRefreshBtn');
+            if (btn) { btn.textContent = '⟳ Loading…'; btn.disabled = true; btn.style.opacity = '0.6'; }
+
             fetch(PIE_USAGE_URL + '?summary=false')
-                .then(r => r.json())
+                .then(r => {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                })
                 .then(data => {
                     _usageData = data.events || [];
+                    if (btn) {
+                        btn.textContent = _usageData.length > 0 ? '✓ Updated' : '✓ No events yet';
+                        btn.style.opacity = '1'; btn.disabled = false;
+                        setTimeout(() => { btn.textContent = '↻ Refresh'; }, 2000);
+                    }
                     renderUsageAnalytics();
                 })
-                .catch(() => {
+                .catch((err) => {
+                    console.warn('PIE usage fetch failed:', err);
                     // Fallback: use feedbackHistory as proxy data
                     _usageData = feedbackHistory.map(fb => ({
                         rep: fb.assignedRep || 'Unknown',
@@ -4060,6 +4076,11 @@
                         metadata: { prospect: fb.prospectName, disposition: fb.disposition },
                         timestamp: fb.time || fb.date + 'T12:00:00.000Z'
                     }));
+                    if (btn) {
+                        btn.textContent = _usageData.length > 0 ? '↻ Showing local data' : '⚠ Could not connect';
+                        btn.style.opacity = '1'; btn.disabled = false;
+                        setTimeout(() => { btn.textContent = '↻ Refresh'; }, 3000);
+                    }
                     renderUsageAnalytics();
                 });
         }
