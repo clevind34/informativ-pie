@@ -546,13 +546,18 @@ class BrowserbaseDealerScraper:
 
         try:
             async with async_playwright() as pw:
-                # Connect to Browserbase
-                browser = await pw.chromium.connect_over_cdp(
+                # Connect to Browserbase with stealth settings
+                connect_url = (
                     f"{BROWSERBASE_CONNECT_URL}?apiKey={self.api_key}"
                     f"&projectId={self.project_id}"
+                    f"&enableProxy=true"
                 )
+                browser = await pw.chromium.connect_over_cdp(connect_url)
                 context = browser.contexts[0]
                 page = context.pages[0] if context.pages else await context.new_page()
+
+                # Set realistic viewport and user agent
+                await page.set_viewport_size({"width": 1440, "height": 900})
 
                 for zip_code in zip_codes:
                     try:
@@ -584,34 +589,81 @@ class BrowserbaseDealerScraper:
         dealers = []
         url = target.locator_url
 
-        await page.goto(url, wait_until="networkidle", timeout=30000)
-        await page.wait_for_timeout(2000)
+        # Use domcontentloaded instead of networkidle — SPA sites like Toyota/Ford
+        # have persistent analytics requests that never fully settle, causing 30s timeouts.
+        # Retry once with increased timeout if first attempt fails.
+        for attempt in range(2):
+            try:
+                timeout = 45000 if attempt == 0 else 60000
+                await page.goto(url, wait_until="domcontentloaded", timeout=timeout)
+                await page.wait_for_timeout(3000)  # Let SPA hydrate
+                break
+            except Exception as nav_err:
+                if attempt == 0:
+                    logger.warning(f"Navigation attempt 1 failed for {url}, retrying: {nav_err}")
+                    await page.wait_for_timeout(2000)
+                else:
+                    logger.error(f"Navigation failed after 2 attempts for {url}: {nav_err}")
+                    return dealers
 
-        # Try to find and fill zip code search
+        # Expanded zip selectors — covers Toyota, Honda, Ford, GM, Hyundai, etc.
         zip_selectors = [
             'input[placeholder*="zip"]', 'input[placeholder*="ZIP"]',
-            'input[placeholder*="location"]', 'input[placeholder*="city"]',
+            'input[placeholder*="Zip"]',
+            'input[placeholder*="location"]', 'input[placeholder*="Location"]',
+            'input[placeholder*="city"]', 'input[placeholder*="City"]',
+            'input[placeholder*="address"]', 'input[placeholder*="Address"]',
+            'input[placeholder*="Enter"]',
+            'input[placeholder*="Search"]', 'input[placeholder*="search"]',
             'input[name*="zip"]', 'input[name*="location"]',
-            'input[type="search"]', 'input[aria-label*="zip"]',
+            'input[name*="search"]', 'input[name*="query"]',
+            'input[name*="dealer"]', 'input[name*="address"]',
+            'input[type="search"]',
+            'input[aria-label*="zip"]', 'input[aria-label*="Zip"]',
+            'input[aria-label*="location"]', 'input[aria-label*="Location"]',
+            'input[aria-label*="search"]', 'input[aria-label*="Search"]',
+            'input[aria-label*="dealer"]', 'input[aria-label*="Dealer"]',
+            'input[aria-label*="Find"]', 'input[aria-label*="find"]',
+            'input[aria-label*="Enter"]',
             '#zip', '#zipcode', '#location-input',
+            '#dealerSearch', '#dealer-search',
+            '#searchInput', '#search-input',
+            '[data-testid*="zip"]', '[data-testid*="search"]',
+            '[data-testid*="location"]',
+            # Honda-specific selectors
+            'input.search-input', 'input.dealer-search',
+            '#hondaDealerSearch', '.dealer-locator input[type="text"]',
+            '.search-box input', '.locator-search input',
+            # Broader fallbacks
+            'form input[type="text"]:first-of-type',
         ]
 
         filled = False
         for sel in zip_selectors:
             try:
                 el = await page.query_selector(sel)
-                if el:
+                if el and await el.is_visible():
+                    await el.click()
+                    await el.fill("")  # Clear first
                     await el.fill(zip_code)
                     await page.keyboard.press("Enter")
-                    await page.wait_for_timeout(3000)
+                    await page.wait_for_timeout(4000)  # Allow results to load
                     filled = True
                     break
             except Exception:
                 continue
 
         if not filled:
-            logger.warning(f"Could not find zip input on {url}")
-            return dealers
+            # Last resort: try clicking any visible search button after page load
+            logger.warning(f"Could not find zip input on {url}, trying URL-based search")
+            # Some locators accept zip via URL parameter
+            url_with_zip = f"{url}?zipcode={zip_code}&zip={zip_code}"
+            try:
+                await page.goto(url_with_zip, wait_until="domcontentloaded", timeout=30000)
+                await page.wait_for_timeout(4000)
+            except Exception:
+                logger.warning(f"URL-based search also failed for {url}")
+                return dealers
 
         # Extract dealer cards
         dealer_selectors = [
@@ -726,7 +778,7 @@ class BrowserbaseDealerScraper:
             return dealer
 
         try:
-            await page.goto(dealer.website_url, wait_until="networkidle", timeout=20000)
+            await page.goto(dealer.website_url, wait_until="domcontentloaded", timeout=30000)
             await page.wait_for_timeout(1500)
 
             # 1. Scrape inventory
@@ -759,7 +811,7 @@ class BrowserbaseDealerScraper:
             try:
                 resp = await page.goto(
                     f"{base_url}{path}",
-                    wait_until="networkidle",
+                    wait_until="domcontentloaded",
                     timeout=15000
                 )
                 if resp and resp.ok:
@@ -806,7 +858,7 @@ class BrowserbaseDealerScraper:
             try:
                 resp = await page.goto(
                     f"{base_url}{path}",
-                    wait_until="networkidle",
+                    wait_until="domcontentloaded",
                     timeout=15000
                 )
                 if resp and resp.ok:
@@ -837,7 +889,7 @@ class BrowserbaseDealerScraper:
             try:
                 resp = await page.goto(
                     f"{base_url}{path}",
-                    wait_until="networkidle",
+                    wait_until="domcontentloaded",
                     timeout=15000
                 )
                 if resp and resp.ok:
