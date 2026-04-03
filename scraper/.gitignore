@@ -1,0 +1,6 @@
+# Cache
+__pycache__/
+*.pyc
+
+# Local scrape outputs (engine writes here, Action copies to output/)
+Scrape_Outputs/
