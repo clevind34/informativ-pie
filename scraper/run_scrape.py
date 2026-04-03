@@ -187,6 +187,7 @@ def main():
     )
 
     # Copy output CSVs to the output directory for artifact upload
+    revops_dest = None
     for key in ["csv_path", "csv_all_path"]:
         src = results.get(key)
         if src and Path(src).exists():
@@ -194,12 +195,33 @@ def main():
             dest = OUTPUT_DIR / Path(src).name
             shutil.copy2(src, dest)
             logger.info(f"Copied {Path(src).name} → output/")
+            if key == "csv_path":
+                revops_dest = dest
 
     # Copy reconciliation
     recon = results.get("reconciliation_path")
     if recon and Path(recon).exists():
         import shutil
         shutil.copy2(recon, OUTPUT_DIR / Path(recon).name)
+
+    # ─── Data validation: filter junk before commit ───
+    if revops_dest and revops_dest.exists():
+        try:
+            from scrape_validator import validate_scrape_results
+            clean_path, val_report = validate_scrape_results(str(revops_dest), min_confidence=30)
+            logger.info(
+                f"Validation: {val_report['raw_count']} raw → {val_report['clean_count']} clean "
+                f"({val_report['acceptance_rate']}% acceptance)"
+            )
+            # Replace the raw RevOps CSV with the clean version
+            import shutil
+            shutil.copy2(clean_path, revops_dest)
+            logger.info(f"Replaced RevOps CSV with validated version ({val_report['clean_count']} records)")
+            results['validated'] = True
+            results['validation_report'] = val_report
+        except Exception as e:
+            logger.warning(f"Validation step failed (raw data preserved): {e}")
+            results['validated'] = False
 
     # Write summary
     summary = write_summary(results, territories_targeted, all_gaps)
