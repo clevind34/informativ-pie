@@ -1,0 +1,13 @@
+{
+  "contacts": {
+    "test-123": {
+      "created_at": "2026-04-03T19:41:00.953Z",
+      "title": "General Manager",
+      "edited_by": "claude-test",
+      "edited_at": "2026-04-03T19:41:00.953Z"
+    }
+  },
+  "schema_version": "1.0",
+  "created_at": "2026-04-03T19:41:00.953Z",
+  "last_modified": "2026-04-03T19:41:00.953Z"
+}
