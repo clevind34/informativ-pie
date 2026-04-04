@@ -1,0 +1,1361 @@
+{
+  "generated_at": "2026-04-04T15:00:58.009367+00:00",
+  "summary": {
+    "total_dealers_scraped": 1867,
+    "total_suppressed": 185,
+    "total_net_new": 1682,
+    "overall_suppression_rate": 9.9,
+    "avg_data_completeness": 31.5
+  },
+  "field_completeness": {
+    "dealership_name": {
+      "populated": 1867,
+      "missing": 0,
+      "capture_rate": 100.0
+    },
+    "website_url": {
+      "populated": 324,
+      "missing": 1543,
+      "capture_rate": 17.4
+    },
+    "city": {
+      "populated": 254,
+      "missing": 1613,
+      "capture_rate": 13.6
+    },
+    "state": {
+      "populated": 1867,
+      "missing": 0,
+      "capture_rate": 100.0
+    },
+    "phone": {
+      "populated": 297,
+      "missing": 1570,
+      "capture_rate": 15.9
+    },
+    "oem_brand": {
+      "populated": 1867,
+      "missing": 0,
+      "capture_rate": 100.0
+    },
+    "contact_name": {
+      "populated": 0,
+      "missing": 1867,
+      "capture_rate": 0.0
+    },
+    "contact_title": {
+      "populated": 0,
+      "missing": 1867,
+      "capture_rate": 0.0
+    },
+    "contact_email": {
+      "populated": 0,
+      "missing": 1867,
+      "capture_rate": 0.0
+    },
+    "contact_phone": {
+      "populated": 0,
+      "missing": 1867,
+      "capture_rate": 0.0
+    },
+    "new_inventory_count": {
+      "populated": 0,
+      "missing": 1867,
+      "capture_rate": 0.0
+    },
+    "used_inventory_count": {
+      "populated": 0,
+      "missing": 1867,
+      "capture_rate": 0.0
+    },
+    "estimated_vehicles_sold": {
+      "populated": 0,
+      "missing": 1867,
+      "capture_rate": 0.0
+    },
+    "dealer_group": {
+      "populated": 0,
+      "missing": 1867,
+      "capture_rate": 0.0
+    }
+  },
+  "territory_breakdown": {
+    "New Jersey": {
+      "total_scraped": 293,
+      "suppressed": 46,
+      "net_new": 247,
+      "with_contact": 0,
+      "with_inventory": 0,
+      "with_email": 0,
+      "avg_completeness": 31.6
+    },
+    "NY Metro": {
+      "total_scraped": 681,
+      "suppressed": 67,
+      "net_new": 614,
+      "with_contact": 0,
+      "with_inventory": 0,
+      "with_email": 0,
+      "avg_completeness": 31.9
+    },
+    "North East": {
+      "total_scraped": 893,
+      "suppressed": 72,
+      "net_new": 821,
+      "with_contact": 0,
+      "with_inventory": 0,
+      "with_email": 0,
+      "avg_completeness": 31.2
+    }
+  },
+  "oem_breakdown": {
+    "Toyota": {
+      "total": 87,
+      "suppressed": 3,
+      "with_inventory": 0
+    },
+    "Honda": {
+      "total": 28,
+      "suppressed": 0,
+      "with_inventory": 0
+    },
+    "Ford": {
+      "total": 244,
+      "suppressed": 27,
+      "with_inventory": 0
+    },
+    "Chevrolet": {
+      "total": 9,
+      "suppressed": 0,
+      "with_inventory": 0
+    },
+    "Nissan": {
+      "total": 176,
+      "suppressed": 30,
+      "with_inventory": 0
+    },
+    "Hyundai": {
+      "total": 206,
+      "suppressed": 16,
+      "with_inventory": 0
+    },
+    "Kia": {
+      "total": 394,
+      "suppressed": 43,
+      "with_inventory": 0
+    },
+    "Subaru": {
+      "total": 166,
+      "suppressed": 0,
+      "with_inventory": 0
+    },
+    "Volkswagen": {
+      "total": 56,
+      "suppressed": 0,
+      "with_inventory": 0
+    },
+    "Mazda": {
+      "total": 80,
+      "suppressed": 13,
+      "with_inventory": 0
+    },
+    "BMW": {
+      "total": 344,
+      "suppressed": 53,
+      "with_inventory": 0
+    },
+    "Mercedes-Benz": {
+      "total": 66,
+      "suppressed": 0,
+      "with_inventory": 0
+    },
+    "Audi": {
+      "total": 11,
+      "suppressed": 0,
+      "with_inventory": 0
+    }
+  },
+  "suppression_analysis": {
+    "total_suppressed": 185,
+    "by_reason": {
+      "substring_match": 153,
+      "exact_name_match": 32
+    },
+    "suppressed_dealers": [
+      {
+        "name": "State or Dealer Name\n1\nTeam Toyota of Princeton",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Team Toyota Princeton"
+      },
+      {
+        "name": "Freedom Ford",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Freedom Ford Lincoln of Claypool Hill"
+      },
+      {
+        "name": "Dana Ford",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Dana Ford Lincoln"
+      },
+      {
+        "name": "Salerno Duane Ford",
+        "state": "NJ",
+        "reason": "exact_name_match",
+        "matched": "Salerno Duane Ford LLC"
+      },
+      {
+        "name": "All American Ford Inc",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "All American Ford Subaru in Old Bridge"
+      },
+      {
+        "name": "Fette Ford",
+        "state": "NJ",
+        "reason": "exact_name_match",
+        "matched": "Fette Ford"
+      },
+      {
+        "name": "Larson Ford Inc",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Don Larson Ford"
+      },
+      {
+        "name": "All American Ford in Point Pleasant",
+        "state": "NJ",
+        "reason": "exact_name_match",
+        "matched": "All American Ford in Point Pleasant"
+      },
+      {
+        "name": "Celebrity Ford of Toms River",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "CELEBRITY AUTO GROUP"
+      },
+      {
+        "name": "3600\n\nDealer website\nContact Dealer\nL\nHILLTOP NISSAN",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "HILLTOP MOTORS"
+      },
+      {
+        "name": "5400\n\nDealer website\nContact Dealer\nM\nKINGS NISSAN",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Kings Nissan"
+      },
+      {
+        "name": "1200\n\nDealer website\nContact Dealer\nI\nHILLTOP NISSAN",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "HILLTOP MOTORS"
+      },
+      {
+        "name": "6400\n\nDealer website\nContact Dealer\nN\nKINGS NISSAN",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Kings Nissan"
+      },
+      {
+        "name": "1200\n\nDealer website\nContact Dealer\nD\nRAMSEY NISSAN",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "RAMSEY MOTORS"
+      },
+      {
+        "name": "from 07601\nParamus Hyundai",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Paramus Hyundai"
+      },
+      {
+        "name": "5 of 10 matches\n1\nParamus Hyundai",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Paramus Hyundai"
+      },
+      {
+        "name": "Island Kia",
+        "state": "NY",
+        "reason": "exact_name_match",
+        "matched": "ISLAND KIA"
+      },
+      {
+        "name": "Island Kia",
+        "state": "NJ",
+        "reason": "exact_name_match",
+        "matched": "ISLAND KIA"
+      },
+      {
+        "name": "Global Kia of North Plainfield",
+        "state": "NJ",
+        "reason": "exact_name_match",
+        "matched": "Global Kia of North Plainfield"
+      },
+      {
+        "name": "Jersey City Kia",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "City Kia"
+      },
+      {
+        "name": "Fette Kia",
+        "state": "NJ",
+        "reason": "exact_name_match",
+        "matched": "Fette Kia"
+      },
+      {
+        "name": "Freehold,",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "DCH Freehold Toyota  L#705"
+      },
+      {
+        "name": "Kia of Englewood",
+        "state": "NJ",
+        "reason": "exact_name_match",
+        "matched": "KIA OF ENGLEWOOD"
+      },
+      {
+        "name": "Englewood,",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Chrysler Dodge Jeep Ram of Englewood Cliffs"
+      },
+      {
+        "name": "Lakewood,",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Jaguar Lakewood"
+      },
+      {
+        "name": "Toms River,",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Pine Belt Nissan of Toms River"
+      },
+      {
+        "name": "WANTAGH MAZDA",
+        "state": "NY",
+        "reason": "exact_name_match",
+        "matched": "WANTAGH MAZDA"
+      },
+      {
+        "name": "MAZDA OF VALLEY STREAM",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "VALLEY AUTO LLC"
+      },
+      {
+        "name": "RIVERHEAD MAZDA",
+        "state": "NY",
+        "reason": "exact_name_match",
+        "matched": "Riverhead Mazda"
+      },
+      {
+        "name": "NJ 07003\n5\nBMW of Bridgewater",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "BMW OF BRIDGEWATER"
+      },
+      {
+        "name": "NJ 07960\n Certified Center\n7\nBMW of Manhattan",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "NJ 07662\n Certified Center\n11\nCircle BMW",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "CIRCLE BMW"
+      },
+      {
+        "name": "NJ 07081\n Certified Center\n3\nBMW of Manhattan",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "NJ 08817\n Certified Center\n11\nBMW of Ramsey",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "RAMSEY MOTORS"
+      },
+      {
+        "name": "NJ 07446\n Certified Center\n12\nBMW of Manhasset",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "NY 11030\n Certified Center\n13\nBMW of Bridgewater",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "BMW OF BRIDGEWATER"
+      },
+      {
+        "name": "1\nPrinceton BMW",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Princeton BMW"
+      },
+      {
+        "name": "PA 18901\n Certified Center\n8\nCircle BMW",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "CIRCLE BMW"
+      },
+      {
+        "name": "NJ 07724\n Certified Center\n9\nBMW of Bridgewater",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "BMW OF BRIDGEWATER"
+      },
+      {
+        "name": "NJ 07670\n3\nBMW of Manhattan",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "NJ 07470\n Certified Center\n7\nBMW of Ramsey",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "RAMSEY MOTORS"
+      },
+      {
+        "name": "NY 11209\n12\nBMW of Manhasset",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "NJ 07728\n Certified Center\n2\nCircle BMW",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "CIRCLE BMW"
+      },
+      {
+        "name": "NJ 07724\n Certified Center\n3\nPrinceton BMW",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Princeton BMW"
+      },
+      {
+        "name": "NJ 08054\n Certified Center\n7\nBMW of Bridgewater",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "BMW OF BRIDGEWATER"
+      },
+      {
+        "name": "NJ 07003\n11\nBMW of Manhattan",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "Premier Ford Inc",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "Premier Ford of Waveland"
+      },
+      {
+        "name": "Premier Ford of Bay Ridge",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "PREMIER MOTORS"
+      },
+      {
+        "name": "DePaula Ford LLC",
+        "state": "NY",
+        "reason": "exact_name_match",
+        "matched": "DEPAULA FORD LLC"
+      },
+      {
+        "name": "Metro Ford Sales Inc",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "D AUTO SALES"
+      },
+      {
+        "name": "Towne Ford",
+        "state": "NY",
+        "reason": "exact_name_match",
+        "matched": "TOWNE FORD INC"
+      },
+      {
+        "name": "Ford Security Package requires the Ford app",
+        "state": "MA",
+        "reason": "substring_match",
+        "matched": "Equire Inc"
+      },
+      {
+        "name": "DePaula Ford LLC",
+        "state": "MA",
+        "reason": "exact_name_match",
+        "matched": "DEPAULA FORD LLC"
+      },
+      {
+        "name": "Live Chat\nEnglish\nABOUT\nAbout Nissan",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "ENGLISH MOTORS INC"
+      },
+      {
+        "name": "1600\n\nDealer website\nContact Dealer\nH\nCOUNTRYSIDE NISSAN",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "COUNTRYSIDE MOTORS LLC"
+      },
+      {
+        "name": "A\nKEN GARFF NISSAN RIVERDALE",
+        "state": "MA",
+        "reason": "substring_match",
+        "matched": "Ken Garff Nissan Riverdale"
+      },
+      {
+        "name": "A\nBERTERA NISSAN",
+        "state": "MA",
+        "reason": "substring_match",
+        "matched": "BERTERA NISSAN"
+      },
+      {
+        "name": "4300\n\nDealer website\nContact Dealer\nC\nMARLBORO NISSAN",
+        "state": "MA",
+        "reason": "substring_match",
+        "matched": "Marlboro Nissan"
+      },
+      {
+        "name": "3232\n\nDealer website\nContact Dealer\nD\nMILFORD NISSAN",
+        "state": "MA",
+        "reason": "substring_match",
+        "matched": "Milford Nissan"
+      },
+      {
+        "name": "0555\n\nDealer website\nContact Dealer\nD\nMIDDLETOWN NISSAN",
+        "state": "CT",
+        "reason": "substring_match",
+        "matched": "MIDDLETOWN NISSAN"
+      },
+      {
+        "name": "6550\n\nDealer website\nContact Dealer\nE\nLIA NISSAN OF ENFIELD",
+        "state": "CT",
+        "reason": "substring_match",
+        "matched": "Lia Nissan Enfield"
+      },
+      {
+        "name": "5701\n\nDealer website\nContact Dealer\nB\nEXECUTIVE NISSAN",
+        "state": "CT",
+        "reason": "substring_match",
+        "matched": "Executive Auto Group Inc."
+      },
+      {
+        "name": "8221\n\nDealer website\nContact Dealer\nH\nMIDDLETOWN NISSAN",
+        "state": "CT",
+        "reason": "substring_match",
+        "matched": "MIDDLETOWN NISSAN"
+      },
+      {
+        "name": "5220\n\nDealer website\nContact Dealer\nC\nBRUCE BENNETT NISSAN",
+        "state": "CT",
+        "reason": "substring_match",
+        "matched": "BENNETT MOTORS INC"
+      },
+      {
+        "name": "2300\n\nDealer website\nContact Dealer\nH\nNISSAN OF HUNTINGTON",
+        "state": "CT",
+        "reason": "substring_match",
+        "matched": "NISSAN OF HUNTINGTON"
+      },
+      {
+        "name": "3500\n\nDealer website\nContact Dealer\nO\nNISSAN OF GARDEN CITY",
+        "state": "CT",
+        "reason": "substring_match",
+        "matched": "NISSAN OF GARDEN CITY"
+      },
+      {
+        "name": "8614\n\nDealer website\nContact Dealer\nG\nMILFORD NISSAN",
+        "state": "RI",
+        "reason": "substring_match",
+        "matched": "Milford Nissan"
+      },
+      {
+        "name": "from 11201\nHudson Hyundai",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "Hudson Hyundai"
+      },
+      {
+        "name": "3\nRockland Hyundai",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "ROCKLAND HYUNDAI"
+      },
+      {
+        "name": "from 02901\nPride Hyundai Of Seekonk",
+        "state": "RI",
+        "reason": "substring_match",
+        "matched": "Pride Hyundai of Seekonk"
+      },
+      {
+        "name": "5 of 10 matches\n1\nPride Hyundai Of Seekonk",
+        "state": "RI",
+        "reason": "substring_match",
+        "matched": "Pride Hyundai of Seekonk"
+      },
+      {
+        "name": "61-07 Northern Blvd",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "Northern Motors, Inc"
+      },
+      {
+        "name": "Jersey City Kia",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "City Kia"
+      },
+      {
+        "name": "Brooklyn,",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "Morries Brooklyn Park Subaru"
+      },
+      {
+        "name": "Yonkers,",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "Yonkers Automall"
+      },
+      {
+        "name": "Albany,",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "Albany Chrysler Dodge Jeep Ram"
+      },
+      {
+        "name": "Shrewsbury,",
+        "state": "MA",
+        "reason": "substring_match",
+        "matched": "BMW of Shrewsbury"
+      },
+      {
+        "name": "Lancaster,",
+        "state": "MA",
+        "reason": "substring_match",
+        "matched": "Chapman Ford of Lancaster"
+      },
+      {
+        "name": "Albany,",
+        "state": "MA",
+        "reason": "substring_match",
+        "matched": "Albany Chrysler Dodge Jeep Ram"
+      },
+      {
+        "name": "Balise Kia",
+        "state": "MA",
+        "reason": "exact_name_match",
+        "matched": "Balise Kia"
+      },
+      {
+        "name": "Enfield,",
+        "state": "CT",
+        "reason": "substring_match",
+        "matched": "Kunes Buick GMC Greenfield"
+      },
+      {
+        "name": "Premier Kia",
+        "state": "CT",
+        "reason": "substring_match",
+        "matched": "Premier Kia of Carlsbad"
+      },
+      {
+        "name": "205 North Main Street",
+        "state": "CT",
+        "reason": "substring_match",
+        "matched": "North Main Motors"
+      },
+      {
+        "name": "Milford,",
+        "state": "CT",
+        "reason": "substring_match",
+        "matched": "Milford Nissan"
+      },
+      {
+        "name": "Executive Kia",
+        "state": "CT",
+        "reason": "exact_name_match",
+        "matched": "Executive Kia"
+      },
+      {
+        "name": "Johnston,",
+        "state": "RI",
+        "reason": "substring_match",
+        "matched": "Johnstone Supply - Waltham"
+      },
+      {
+        "name": "795 Newport Avenue Rt. 1a",
+        "state": "MA",
+        "reason": "substring_match",
+        "matched": "Newport Motors"
+      },
+      {
+        "name": "795 Newport Avenue Rt. 1a",
+        "state": "RI",
+        "reason": "substring_match",
+        "matched": "Newport Motors"
+      },
+      {
+        "name": "HAMILTON MAZDA",
+        "state": "NJ",
+        "reason": "exact_name_match",
+        "matched": "Hamilton Mazda"
+      },
+      {
+        "name": "PINE BELT MAZDA",
+        "state": "NJ",
+        "reason": "exact_name_match",
+        "matched": "Pine Belt Mazda"
+      },
+      {
+        "name": "PACIFICO MAZDA",
+        "state": "PA",
+        "reason": "exact_name_match",
+        "matched": "Pacifico Mazda"
+      },
+      {
+        "name": "ISLAND MAZDA",
+        "state": "NY",
+        "reason": "exact_name_match",
+        "matched": "ISLAND MAZDA"
+      },
+      {
+        "name": "MAZDA OF LODI",
+        "state": "NJ",
+        "reason": "exact_name_match",
+        "matched": "MAZDA OF LODI"
+      },
+      {
+        "name": "RAMSEY MAZDA",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "RAMSEY MOTORS"
+      },
+      {
+        "name": "NAPLETON'S COUNTRYSIDE MAZDA",
+        "state": "IL",
+        "reason": "substring_match",
+        "matched": "COUNTRYSIDE MOTORS LLC"
+      },
+      {
+        "name": "ART HILL MAZDA",
+        "state": "IN",
+        "reason": "exact_name_match",
+        "matched": "ART HILL MAZDA"
+      },
+      {
+        "name": "1\nBMW of Manhattan",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "NJ 07670\n7\nBMW of Manhasset",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "NY 10607\n Certified Center\n13\nBMW of Ramsey",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "RAMSEY MOTORS"
+      },
+      {
+        "name": "NY 11209\n2\nBMW of Manhattan",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "NJ 07003\n6\nBMW of Manhasset",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "CT 06820\n Certified Center\n8\nBMW of Manhasset",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "NJ 07662\n Certified Center\n10\nBMW of Ramsey",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "RAMSEY MOTORS"
+      },
+      {
+        "name": "NY 11590\n Certified Center\n12\nBMW of Manhattan",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "MA 01089\n Certified Center\n5\nBMW of the Hudson Valley",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "VALLEY AUTO LLC"
+      },
+      {
+        "name": "CT 06877\n Certified Center\n9\nOrange County BMW",
+        "state": "NY",
+        "reason": "substring_match",
+        "matched": "ORANGE COUNTY BMW"
+      },
+      {
+        "name": "1\nBMW of Shrewsbury",
+        "state": "MA",
+        "reason": "substring_match",
+        "matched": "BMW of Shrewsbury"
+      },
+      {
+        "name": "MA 02370\n10\nBMW of Peabody",
+        "state": "MA",
+        "reason": "substring_match",
+        "matched": "BMW Peabody"
+      },
+      {
+        "name": "MA 01960\n Certified Center\n11\nTulley BMW Manchester",
+        "state": "MA",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "CT 06120\n Certified Center\n13\nBMW of Newport",
+        "state": "MA",
+        "reason": "substring_match",
+        "matched": "Newport Motors"
+      },
+      {
+        "name": "CT 06877\n Certified Center\n9\nBMW of Shrewsbury",
+        "state": "CT",
+        "reason": "substring_match",
+        "matched": "BMW of Shrewsbury"
+      },
+      {
+        "name": "CT 06820\n Certified Center\n13\nBMW of the Hudson Valley",
+        "state": "CT",
+        "reason": "substring_match",
+        "matched": "VALLEY AUTO LLC"
+      },
+      {
+        "name": "CT 06877\n Certified Center\n9\nBMW of Manhasset",
+        "state": "CT",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "State or Dealer Name\n1\nBennett Toyota",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "BENNETT MOTORS INC"
+      },
+      {
+        "name": "State or Dealer Name\n1\nMcGovern Toyota of Concord",
+        "state": "NH",
+        "reason": "substring_match",
+        "matched": "McGovern Toyota of Concord"
+      },
+      {
+        "name": "Winner Ford",
+        "state": "DE",
+        "reason": "exact_name_match",
+        "matched": "Winner Ford"
+      },
+      {
+        "name": "Boulevard Ford",
+        "state": "DE",
+        "reason": "exact_name_match",
+        "matched": "Boulevard Ford"
+      },
+      {
+        "name": "Sheridan Ford Sales",
+        "state": "DE",
+        "reason": "substring_match",
+        "matched": "D AUTO SALES"
+      },
+      {
+        "name": "Pacifico Ford",
+        "state": "PA",
+        "reason": "exact_name_match",
+        "matched": "Pacifico Ford Inc"
+      },
+      {
+        "name": "Springfield Ford",
+        "state": "PA",
+        "reason": "exact_name_match",
+        "matched": "SPRINGFIELD FORD"
+      },
+      {
+        "name": "Winner Ford",
+        "state": "PA",
+        "reason": "exact_name_match",
+        "matched": "Winner Ford"
+      },
+      {
+        "name": "Smith Ford",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "BOB SMITH FORD"
+      },
+      {
+        "name": "Hoffman Ford Sales",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "D AUTO SALES"
+      },
+      {
+        "name": "s Ford",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "Parks Ford of Wesley Chapel"
+      },
+      {
+        "name": "Monadnock Ford",
+        "state": "VT",
+        "reason": "exact_name_match",
+        "matched": "Monadnock Ford"
+      },
+      {
+        "name": "Mathieu Ford Sales Inc",
+        "state": "VT",
+        "reason": "substring_match",
+        "matched": "D AUTO SALES"
+      },
+      {
+        "name": "Rowe Ford Sales",
+        "state": "ME",
+        "reason": "substring_match",
+        "matched": "D AUTO SALES"
+      },
+      {
+        "name": "8300\n\nDealer website\nContact Dealer\nC\nFAMILY NISSAN",
+        "state": "MD",
+        "reason": "substring_match",
+        "matched": "Family Nissan"
+      },
+      {
+        "name": "0100\n\nDealer website\nContact Dealer\nD\nNISSAN OF GARDEN CITY",
+        "state": "MD",
+        "reason": "substring_match",
+        "matched": "NISSAN OF GARDEN CITY"
+      },
+      {
+        "name": "1111\n\nDealer website\nContact Dealer\nJ\nKINGS NISSAN",
+        "state": "MD",
+        "reason": "substring_match",
+        "matched": "Kings Nissan"
+      },
+      {
+        "name": "3900\n\nDealer website\nContact Dealer\nO\nSOUTH SHORE NISSAN",
+        "state": "MD",
+        "reason": "substring_match",
+        "matched": "South Shore Nissan"
+      },
+      {
+        "name": "8300\n\nDealer website\nContact Dealer\nD\nNISSAN OF GARDEN CITY",
+        "state": "MD",
+        "reason": "substring_match",
+        "matched": "NISSAN OF GARDEN CITY"
+      },
+      {
+        "name": "1111\n\nDealer website\nContact Dealer\nG\nFAMILY NISSAN",
+        "state": "MD",
+        "reason": "substring_match",
+        "matched": "Family Nissan"
+      },
+      {
+        "name": "3900\n\nDealer website\nContact Dealer\nM\nKINGS NISSAN",
+        "state": "MD",
+        "reason": "substring_match",
+        "matched": "Kings Nissan"
+      },
+      {
+        "name": "8400\n\nDealer website\nContact Dealer\nC\nFIRST NISSAN",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "First Nissan"
+      },
+      {
+        "name": "A\nTEAM NISSAN",
+        "state": "NH",
+        "reason": "substring_match",
+        "matched": "Team Nissan LLC"
+      },
+      {
+        "name": "3500\n\nDealer website\nContact Dealer\nC\nTEAM NISSAN",
+        "state": "NH",
+        "reason": "substring_match",
+        "matched": "Team Nissan LLC"
+      },
+      {
+        "name": "Live Chat\nEnglish\nABOUT\nAbout Nissan",
+        "state": "ME",
+        "reason": "substring_match",
+        "matched": "ENGLISH MOTORS INC"
+      },
+      {
+        "name": "from 20601\nSheehy Hyundai Of Waldorf",
+        "state": "MD",
+        "reason": "substring_match",
+        "matched": "SHEEHY HYUNDAI OF WALDORF"
+      },
+      {
+        "name": "5 of 10 matches\n1\nSheehy Hyundai Of Waldorf",
+        "state": "MD",
+        "reason": "substring_match",
+        "matched": "SHEEHY HYUNDAI OF WALDORF"
+      },
+      {
+        "name": "from 19101\nPacifico Hyundai",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "Pacifico Hyundai"
+      },
+      {
+        "name": "5 of 10 matches\n1\nPacifico Hyundai",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "Pacifico Hyundai"
+      },
+      {
+        "name": "from 18101\nLehigh Valley Hyundai",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "VALLEY AUTO LLC"
+      },
+      {
+        "name": "5 of 10 matches\n1\nLehigh Valley Hyundai",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "VALLEY AUTO LLC"
+      },
+      {
+        "name": "from 05301\nHyundai Of Keene",
+        "state": "VT",
+        "reason": "substring_match",
+        "matched": "Hyundai of Keene"
+      },
+      {
+        "name": "5 of 10 matches\n1\nHyundai Of Keene",
+        "state": "VT",
+        "reason": "substring_match",
+        "matched": "Hyundai of Keene"
+      },
+      {
+        "name": "from 03301\nMcgovern Hyundai Of Concord",
+        "state": "NH",
+        "reason": "substring_match",
+        "matched": "McGovern Hyundai of Concord"
+      },
+      {
+        "name": "5 of 10 matches\n1\nMcgovern Hyundai Of Concord",
+        "state": "NH",
+        "reason": "substring_match",
+        "matched": "McGovern Hyundai of Concord"
+      },
+      {
+        "name": "Waldorf,",
+        "state": "MD",
+        "reason": "substring_match",
+        "matched": "SHEEHY HYUNDAI OF WALDORF"
+      },
+      {
+        "name": "Ourisman Kia of Alexandria",
+        "state": "VA",
+        "reason": "exact_name_match",
+        "matched": "OURISMAN KIA OF ALEXANDRIA"
+      },
+      {
+        "name": "Ourisman Kia of Alexandria",
+        "state": "MD",
+        "reason": "exact_name_match",
+        "matched": "OURISMAN KIA OF ALEXANDRIA"
+      },
+      {
+        "name": "Annapolis,",
+        "state": "MD",
+        "reason": "substring_match",
+        "matched": "SHEEHY INFINITI OF ANNAPOLIS"
+      },
+      {
+        "name": "Value Kia",
+        "state": "PA",
+        "reason": "exact_name_match",
+        "matched": "VALUE KIA"
+      },
+      {
+        "name": "Philadelphia,",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "Chapman Chevrolet Philadelphia"
+      },
+      {
+        "name": "Springfield,",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "Balise Honda of West Springfield"
+      },
+      {
+        "name": "Easton,",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "PHILLIPSBURG EASTON VEH SALES"
+      },
+      {
+        "name": "Harrisburg,",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "Harrisburg Mitsubishi"
+      },
+      {
+        "name": "Berlin City Kia, Burlington",
+        "state": "VT",
+        "reason": "substring_match",
+        "matched": "City Kia"
+      },
+      {
+        "name": "Williston,",
+        "state": "VT",
+        "reason": "substring_match",
+        "matched": "National Dental Williston Park"
+      },
+      {
+        "name": "Balise Kia",
+        "state": "VT",
+        "reason": "exact_name_match",
+        "matched": "Balise Kia"
+      },
+      {
+        "name": "West Springfield,",
+        "state": "VT",
+        "reason": "substring_match",
+        "matched": "Balise Honda of West Springfield"
+      },
+      {
+        "name": "Manchester,",
+        "state": "NH",
+        "reason": "substring_match",
+        "matched": "Bertera Nissan Manchester"
+      },
+      {
+        "name": "Capital City Kia",
+        "state": "NH",
+        "reason": "substring_match",
+        "matched": "City Kia"
+      },
+      {
+        "name": "Augusta,",
+        "state": "ME",
+        "reason": "substring_match",
+        "matched": "AUGUSTA MARINE"
+      },
+      {
+        "name": "MAZDA OF NORTH MIAMI",
+        "state": "FL",
+        "reason": "exact_name_match",
+        "matched": "Mazda of North Miami"
+      },
+      {
+        "name": "CHAPMAN MAZDA SALES",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "INCA AUTO SALES"
+      },
+      {
+        "name": "DE 19963\n Certified Center\n14\nPrinceton BMW",
+        "state": "DE",
+        "reason": "substring_match",
+        "matched": "Princeton BMW"
+      },
+      {
+        "name": "MD 20852\n Certified Center\n8\nPassport BMW",
+        "state": "MD",
+        "reason": "substring_match",
+        "matched": "Passport BMW"
+      },
+      {
+        "name": "1\nPassport BMW",
+        "state": "MD",
+        "reason": "substring_match",
+        "matched": "Passport BMW"
+      },
+      {
+        "name": "MD 21014\n Certified Center\n12\nRichmond BMW",
+        "state": "MD",
+        "reason": "substring_match",
+        "matched": "Richmond BMW"
+      },
+      {
+        "name": "MD 21228\n Certified Center\n4\nPassport BMW",
+        "state": "MD",
+        "reason": "substring_match",
+        "matched": "Passport BMW"
+      },
+      {
+        "name": "DE 19806\n Certified Center\n9\nPrinceton BMW",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "Princeton BMW"
+      },
+      {
+        "name": "NJ 07728\n Certified Center\n15\nBMW of Bridgewater",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "BMW OF BRIDGEWATER"
+      },
+      {
+        "name": "PA 19004\n8\nBMW of Bridgewater",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "BMW OF BRIDGEWATER"
+      },
+      {
+        "name": "NJ 07847\n10\nPrinceton BMW",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "Princeton BMW"
+      },
+      {
+        "name": "PA 19382\n Certified Center\n12\nWyoming Valley BMW",
+        "state": "PA",
+        "reason": "substring_match",
+        "matched": "VALLEY AUTO LLC"
+      },
+      {
+        "name": "NH 03060\n Certified Center\n6\nTulley BMW Manchester",
+        "state": "VT",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "NH 03103\n7\nBMW of Shrewsbury",
+        "state": "VT",
+        "reason": "substring_match",
+        "matched": "BMW of Shrewsbury"
+      },
+      {
+        "name": "NH 03885\n Certified Center\n14\nBMW of Peabody",
+        "state": "VT",
+        "reason": "substring_match",
+        "matched": "BMW Peabody"
+      },
+      {
+        "name": "1\nTulley BMW Manchester",
+        "state": "NH",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "NH 03885\n Certified Center\n4\nBMW of Peabody",
+        "state": "NH",
+        "reason": "substring_match",
+        "matched": "BMW Peabody"
+      },
+      {
+        "name": "MA 02134\n Certified Center\n8\nBMW of Shrewsbury",
+        "state": "NH",
+        "reason": "substring_match",
+        "matched": "BMW of Shrewsbury"
+      },
+      {
+        "name": "ME 04092\n Certified Center\n9\nBMW of Shrewsbury",
+        "state": "NH",
+        "reason": "substring_match",
+        "matched": "BMW of Shrewsbury"
+      },
+      {
+        "name": "NH 03885\n Certified Center\n3\nTulley BMW Manchester",
+        "state": "ME",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "NH 03103\n4\nBMW of Peabody",
+        "state": "ME",
+        "reason": "substring_match",
+        "matched": "BMW Peabody"
+      }
+    ]
+  },
+  "gap_closure": {
+    "New Jersey": {
+      "original_deficit": 272,
+      "new_leads_added": 247,
+      "remaining_deficit": 25,
+      "closure_pct": 90.8
+    },
+    "NY Metro": {
+      "original_deficit": 155,
+      "new_leads_added": 614,
+      "remaining_deficit": 0,
+      "closure_pct": 100
+    },
+    "North East": {
+      "original_deficit": 102,
+      "new_leads_added": 821,
+      "remaining_deficit": 0,
+      "closure_pct": 100
+    }
+  },
+  "rep_fill_in_required": {
+    "fields_most_missing": [
+      [
+        "contact_name",
+        {
+          "populated": 0,
+          "missing": 1867,
+          "capture_rate": 0.0
+        }
+      ],
+      [
+        "contact_title",
+        {
+          "populated": 0,
+          "missing": 1867,
+          "capture_rate": 0.0
+        }
+      ],
+      [
+        "contact_email",
+        {
+          "populated": 0,
+          "missing": 1867,
+          "capture_rate": 0.0
+        }
+      ],
+      [
+        "contact_phone",
+        {
+          "populated": 0,
+          "missing": 1867,
+          "capture_rate": 0.0
+        }
+      ],
+      [
+        "new_inventory_count",
+        {
+          "populated": 0,
+          "missing": 1867,
+          "capture_rate": 0.0
+        }
+      ]
+    ]
+  }
+}

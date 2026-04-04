@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-04-04T15:00:58.069850",
+  "input_file": "PIE_Scrape_RevOps_20260404_103746.csv",
+  "output_file": "PIE_Scrape_Clean_20260404_103746.csv",
+  "raw_count": 1682,
+  "clean_count": 1091,
+  "rejected_count": 479,
+  "duplicates_removed": 112,
+  "names_cleaned": 407,
+  "acceptance_rate": 64.9,
+  "by_oem": {
+    "Kia": 332,
+    "Ford": 206,
+    "BMW": 165,
+    "Subaru": 159,
+    "Hyundai": 79,
+    "Mazda": 67,
+    "Honda": 28,
+    "Toyota": 22,
+    "Nissan": 22,
+    "Audi": 11
+  },
+  "reject_reasons": {
+    "junk_pattern_or_empty": 479
+  },
+  "confidence_distribution": {
+    "low_30-49": 751,
+    "high_80+": 153,
+    "medium_50-79": 187
+  },
+  "min_confidence_threshold": 30
+}

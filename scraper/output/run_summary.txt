@@ -1,0 +1,17 @@
+**Date:** 2026-04-04 15:00
+**Mode:** real
+**Territories targeted:** New Jersey, NY Metro, North East
+**Targets queued:** 165
+**Dealers scraped:** 3627
+**Unique dealers:** 1867
+**Suppressed (existing clients):** 185
+**Net-new leads:** 1682
+
+**Territory Gap Analysis:**
+  New Jersey                |   95 prospects | deficit: 272 ← TARGETED
+  NY Metro                  |  212 prospects | deficit: 155 ← TARGETED
+  North East                |  265 prospects | deficit: 102 ← TARGETED
+  Central Atlantic          |  289 prospects | deficit:  78 ← UNDERSERVED
+  Central                   |  327 prospects | deficit:  40 ← UNDERSERVED
+  South East                |  349 prospects | deficit:  18 ← UNDERSERVED
+  California                |  360 prospects | deficit:   7 ← UNDERSERVED
