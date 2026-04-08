@@ -7197,13 +7197,22 @@ tr:nth-child(even){background:#F9FAFB}
                 });
             }
 
-            // Add affiliate reps to the rep filter dropdown (only those with assignments)
-            const affReps = [...new Set(allAffiliateLeads.filter(l => l.owner).map(l => l.owner))].sort();
+            // Add affiliate reps to the rep filter dropdown (only active, non-departed reps)
+            const DEPARTED_REPS = new Set(["Nick Moyes", "Tom Meredith", "David Castone", "Loren Rivera"]);
+            const MANAGER_REPS = new Set(["Joel Carlucci", "Teresa Bordenet", "Curtis Knievel", "Kiristen Sandoval"]);
+            const CANONICAL_REPS = new Set(reps); // The clean reps array defined at top
+            const affReps = [...new Set(allAffiliateLeads.filter(l => l.owner).map(l => l.owner))]
+                .filter(rep => !DEPARTED_REPS.has(rep) && !MANAGER_REPS.has(rep) && !CANONICAL_REPS.has(rep))
+                .sort();
             const mainRepFilter = document.getElementById('repFilter');
             if (mainRepFilter) {
                 const existingOptions = new Set([...mainRepFilter.options].map(o => o.value));
                 affReps.forEach(rep => {
-                    if (!existingOptions.has(rep)) {
+                    // Skip full-name Salesforce variants of existing reps (e.g., "Ashton Phillip Gough" vs "Ashton Gough")
+                    const firstName = rep.split(' ')[0];
+                    const lastName = rep.split(' ').pop();
+                    const isVariant = [...CANONICAL_REPS].some(cr => cr.startsWith(firstName) && cr.endsWith(lastName));
+                    if (!existingOptions.has(rep) && !isVariant) {
                         const opt = document.createElement('option');
                         opt.value = rep;
                         opt.textContent = rep;
