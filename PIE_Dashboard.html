@@ -2441,12 +2441,12 @@
             });
         }
 
-        // ===== UNIFIED API GATEWAY =====
-        const API_GATEWAY = 'https://informativ-sales-api.netlify.app';
-        const API_HEADERS = { 'Content-Type': 'application/json', 'X-API-Key': 'UI37Oom7hb8WodwTginyz_a4IcgvyvVZQzWSGDrRhhA' };
+        // ===== UNIFIED API PROXY (same-origin) =====
+        const API_PROXY = '/.netlify/functions/api-proxy';
+        const API_HEADERS = { 'Content-Type': 'application/json' };
 
         // ===== CONTACT EDIT PERSISTENCE =====
-        const _PIE_CONTACTS_API = API_GATEWAY + '/api/cs/contacts';
+        const _PIE_CONTACTS_API = API_PROXY + '?path=/api/cs/contacts';
         let _savedContactEdits = {};
 
         async function loadContactEdits() {
@@ -3289,7 +3289,7 @@
         }
 
         // ===== ADD STORE / ADD CONTACT / SET GROUP (Feature 3) =====
-        const PIE_PROSPECTS_API = API_GATEWAY + '/api/cs/prospects';
+        const PIE_PROSPECTS_API = API_PROXY + '?path=/api/cs/prospects';
         var _customProspects = {};
         var _groupAssociations = {};
         var _additionalContacts = {};
@@ -4212,7 +4212,7 @@
                 timestamp: feedback.time || new Date().toISOString()
             };
 
-            fetch(API_GATEWAY + '/api/cs/dispositions', {
+            fetch(API_PROXY + '?path=/api/cs/dispositions', {
                 method: 'POST',
                 headers: API_HEADERS,
                 body: JSON.stringify(payload)
@@ -4260,7 +4260,7 @@
         // PIE PRICING CALCULATOR — Calls CI Dashboard pricing API
         // ══════════════════════════════════════════════════════════
         
-        const PIE_PRICING_API = API_GATEWAY + '/api/pricing/reprice';
+        const PIE_PRICING_API = API_PROXY + '?path=/api/pricing/reprice';
         
         // Volume estimation model for net-new prospects
         function estimateVolumes(prospect, prospectName) {
@@ -5274,7 +5274,7 @@
             if (rooftopPayloads.length === 0) { alert('No pricing results to download.'); return; }
 
             try {
-                var response = await fetch(API_GATEWAY + '/api/docs/group-reprice-sheet', {
+                var response = await fetch(API_PROXY + '?path=/api/docs/group-reprice-sheet', {
                     method: 'POST', headers: API_HEADERS,
                     body: JSON.stringify({
                         group_name: gp.groupName,
@@ -5522,7 +5522,7 @@
         }
 
         // ===== PIE USAGE TRACKING =====
-        const PIE_USAGE_URL = API_GATEWAY + '/api/analytics/pie-usage';
+        const PIE_USAGE_URL = API_PROXY + '?path=/api/analytics/pie-usage';
         let _usageData = null;
         let _usageRange = 7;
 
@@ -6881,7 +6881,7 @@ tr:nth-child(even){background:#F9FAFB}
         let routePlannerData = { monday: [], tuesday: [], wednesday: [], thursday: [], friday: [] };
         let routeActiveDay = getCurrentDayName();
 
-        // API_GATEWAY and API_HEADERS already declared above (line ~2292)
+        // API_PROXY and API_HEADERS already declared above (line ~2445)
 
         function getCurrentDayName() {
             const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -7115,7 +7115,7 @@ tr:nth-child(even){background:#F9FAFB}
 
         // Async API functions (fire-and-forget)
         function loadRoutesAsync(rep) {
-            fetch(`${API_GATEWAY}/api/cs/routes?rep=${encodeURIComponent(rep)}`, {
+            fetch(`${API_PROXY}?path=/api/cs/routes&rep=${encodeURIComponent(rep)}`, {
                 method: 'GET',
                 headers: API_HEADERS
             })
@@ -7131,7 +7131,7 @@ tr:nth-child(even){background:#F9FAFB}
         }
 
         function addToRouteAsync(rep, day, stop) {
-            fetch(`${API_GATEWAY}/api/cs/routes?rep=${encodeURIComponent(rep)}&day=${day}&action=add_stop`, {
+            fetch(`${API_PROXY}?path=/api/cs/routes&rep=${encodeURIComponent(rep)}&day=${day}&action=add_stop`, {
                 method: 'POST',
                 headers: API_HEADERS,
                 body: JSON.stringify({ stop: stop })
@@ -7139,7 +7139,7 @@ tr:nth-child(even){background:#F9FAFB}
         }
 
         function removeFromRouteAsync(rep, day, stopId) {
-            fetch(`${API_GATEWAY}/api/cs/routes?rep=${encodeURIComponent(rep)}&day=${day}&action=remove_stop`, {
+            fetch(`${API_PROXY}?path=/api/cs/routes&rep=${encodeURIComponent(rep)}&day=${day}&action=remove_stop`, {
                 method: 'POST',
                 headers: API_HEADERS,
                 body: JSON.stringify({ stop_id: stopId })
@@ -7147,7 +7147,7 @@ tr:nth-child(even){background:#F9FAFB}
         }
 
         function moveStopAsync(rep, day, stopId, direction) {
-            fetch(`${API_GATEWAY}/api/cs/routes?rep=${encodeURIComponent(rep)}&day=${day}&action=move_stop`, {
+            fetch(`${API_PROXY}?path=/api/cs/routes&rep=${encodeURIComponent(rep)}&day=${day}&action=move_stop`, {
                 method: 'POST',
                 headers: API_HEADERS,
                 body: JSON.stringify({ stop_id: stopId, direction: direction })
@@ -7155,7 +7155,7 @@ tr:nth-child(even){background:#F9FAFB}
         }
 
         function clearRouteDayAsync(rep, day) {
-            fetch(`${API_GATEWAY}/api/cs/routes?rep=${encodeURIComponent(rep)}&day=${day}&action=clear`, {
+            fetch(`${API_PROXY}?path=/api/cs/routes&rep=${encodeURIComponent(rep)}&day=${day}&action=clear`, {
                 method: 'POST',
                 headers: API_HEADERS,
                 body: JSON.stringify({})

@@ -3044,7 +3044,7 @@
 
     function loadSavedContacts() {
       // Load saved contact edits from pie-contacts API
-      fetch('/.netlify/functions/pie-contacts', { method: 'GET' })
+      fetch(CONTACTS_ENDPOINT, { method: 'GET', headers: API_HEADERS })
         .then(r => r.json())
         .then(data => {
           if (data.contacts && typeof data.contacts === 'object') {
@@ -3843,13 +3843,13 @@
                 value: newValue,
                 edited_by: selectedRep
               };
-              fetch('/.netlify/functions/pie-contacts', {
+              fetch(CONTACTS_ENDPOINT, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: API_HEADERS,
                 body: JSON.stringify(payload)
               }).catch(err => {
                 console.warn('Contact edit save failed, queuing offline:', err);
-                queueOfflineAction({ endpoint: '/.netlify/functions/pie-contacts', payload: payload });
+                queueOfflineAction({ endpoint: CONTACTS_ENDPOINT, payload: payload });
               });
 
               showToast('Contact info saved');
@@ -4205,7 +4205,7 @@
     // === API Integration ===
 
     function fetchRoutesFromAPI(rep) {
-      return fetch(ROUTE_API + '?rep=' + encodeURIComponent(rep), { headers: ROUTE_HEADERS })
+      return fetch(ROUTE_API + '&rep=' + encodeURIComponent(rep), { headers: ROUTE_HEADERS })
         .then(function(r) { return r.json(); })
         .then(function(data) {
           if (data.success && data.routes) return data.routes;
@@ -4217,14 +4217,14 @@
     function saveRouteToAPI(day) {
       var rep = typeof selectedRep !== 'undefined' ? selectedRep : '';
       if (!rep) return;
-      fetch(ROUTE_API + '?rep=' + encodeURIComponent(rep) + '&day=' + day, {
+      fetch(ROUTE_API + '&rep=' + encodeURIComponent(rep) + '&day=' + day, {
         method: 'POST',
         headers: ROUTE_HEADERS,
         body: JSON.stringify({ stops: routeWeekData[day] || [] })
       }).catch(function(err) {
         // Queue for offline sync
         if (typeof queueOfflineAction === 'function') {
-          queueOfflineAction({ endpoint: ROUTE_API + '?rep=' + encodeURIComponent(rep) + '&day=' + day, payload: { stops: routeWeekData[day] || [] } });
+          queueOfflineAction({ endpoint: ROUTE_API + '&rep=' + encodeURIComponent(rep) + '&day=' + day, payload: { stops: routeWeekData[day] || [] } });
         }
       });
     }
@@ -4232,13 +4232,13 @@
     function addStopToAPI(day, stop) {
       var rep = typeof selectedRep !== 'undefined' ? selectedRep : '';
       if (!rep) return;
-      fetch(ROUTE_API + '?rep=' + encodeURIComponent(rep) + '&day=' + day + '&action=add_stop', {
+      fetch(ROUTE_API + '&rep=' + encodeURIComponent(rep) + '&day=' + day + '&action=add_stop', {
         method: 'POST',
         headers: ROUTE_HEADERS,
         body: JSON.stringify({ stop: stop })
       }).catch(function(err) {
         if (typeof queueOfflineAction === 'function') {
-          queueOfflineAction({ endpoint: ROUTE_API + '?rep=' + encodeURIComponent(rep) + '&day=' + day + '&action=add_stop', payload: { stop: stop } });
+          queueOfflineAction({ endpoint: ROUTE_API + '&rep=' + encodeURIComponent(rep) + '&day=' + day + '&action=add_stop', payload: { stop: stop } });
         }
       });
     }
@@ -4246,7 +4246,7 @@
     function removeStopFromAPI(day, stopId) {
       var rep = typeof selectedRep !== 'undefined' ? selectedRep : '';
       if (!rep) return;
-      fetch(ROUTE_API + '?rep=' + encodeURIComponent(rep) + '&day=' + day + '&action=remove_stop', {
+      fetch(ROUTE_API + '&rep=' + encodeURIComponent(rep) + '&day=' + day + '&action=remove_stop', {
         method: 'POST',
         headers: ROUTE_HEADERS,
         body: JSON.stringify({ stop_id: stopId })
@@ -4434,7 +4434,10 @@
     let activityCache = [];
     let activityFilter = 'all';
     let selectedActivityType = null;
-    const ACTIVITY_ENDPOINT = '/.netlify/functions/pie-activity';
+    const API_PROXY = '/.netlify/functions/api-proxy';
+    const API_HEADERS = { 'Content-Type': 'application/json' };
+    const ACTIVITY_ENDPOINT = API_PROXY + '?path=/api/analytics/field-activity';
+    const CONTACTS_ENDPOINT = API_PROXY + '?path=/api/cs/contacts';
 
     // FAB + Sheet control
     document.getElementById('fabBtn').addEventListener('click', openActivitySheet);
@@ -4559,7 +4562,7 @@
       try {
         const resp = await fetch(ACTIVITY_ENDPOINT, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: API_HEADERS,
           body: JSON.stringify(activity)
         });
         if (!resp.ok) throw new Error('Server error');
@@ -4760,7 +4763,7 @@
 
       // Try to fetch from server (fire-and-forget merge)
       try {
-        const resp = await fetch(`${ACTIVITY_ENDPOINT}?rep=${encodeURIComponent(currentRep)}&days=90`);
+        const resp = await fetch(`${ACTIVITY_ENDPOINT}&rep=${encodeURIComponent(currentRep)}&days=90`, { headers: API_HEADERS });
         if (resp.ok) {
           const data = await resp.json();
           if (data.activities && data.activities.length > 0) {
@@ -4834,7 +4837,7 @@
       // Fire to server — queue offline if it fails
       fetch(ACTIVITY_ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: API_HEADERS,
         body: JSON.stringify(activity)
       }).catch(() => {
         queueOfflineAction({ endpoint: ACTIVITY_ENDPOINT, payload: activity });
@@ -4963,7 +4966,7 @@
       // Fire to server — queue offline if it fails
       fetch(ACTIVITY_ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: API_HEADERS,
         body: JSON.stringify(activity)
       }).catch(function() {
         queueOfflineAction({ endpoint: ACTIVITY_ENDPOINT, payload: activity });
@@ -5001,10 +5004,10 @@
     // PHASE 3: Chuck AI + Pricing Calculator
     // ============================================================
 
-    const CHUCK_ENDPOINT = '/.netlify/functions/chuck-api';
-    const REPRICE_ENDPOINT = '/.netlify/functions/reprice-pricing';
-    const ROUTE_API = 'https://informativ-sales-api.netlify.app/api/cs/routes';
-    const ROUTE_HEADERS = { 'Content-Type': 'application/json', 'X-API-Key': 'UI37Oom7hb8WodwTginyz_a4IcgvyvVZQzWSGDrRhhA' };
+    const CHUCK_ENDPOINT = API_PROXY + '?path=/api/ai/mobile';
+    const REPRICE_ENDPOINT = API_PROXY + '?path=/api/pricing/reprice';
+    const ROUTE_API = API_PROXY + '?path=/api/cs/routes';
+    const ROUTE_HEADERS = API_HEADERS;
 
     // ── Chuck AI ──
     function buildProspectPayload() {
@@ -5072,7 +5075,7 @@
       try {
         const resp = await fetch(CHUCK_ENDPOINT, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: API_HEADERS,
           body: JSON.stringify({
             action: action,
             prospect: buildProspectPayload(),
@@ -5193,7 +5196,7 @@
       try {
         const resp = await fetch(REPRICE_ENDPOINT, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: API_HEADERS,
           body: JSON.stringify(customer)
         });
 
@@ -5362,7 +5365,7 @@
       // Gather activity data across ALL reps
       let allActivities = [];
       try {
-        const resp = await fetch(`${ACTIVITY_ENDPOINT}?all=true&days=30`);
+        const resp = await fetch(`${ACTIVITY_ENDPOINT}&all=true&days=30`, { headers: API_HEADERS });
         if (resp.ok) {
           const data = await resp.json();
           allActivities = data.activities || [];
@@ -5814,7 +5817,7 @@
         const endpoint = item.endpoint || ACTIVITY_ENDPOINT;
         const resp = await fetch(endpoint, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: API_HEADERS,
           body: JSON.stringify(item.payload || item)
         });
         return resp.ok;
@@ -5879,8 +5882,8 @@
     // ============================================================
 
     // ===== FEATURE 3: ADD STORE / ADD CONTACT / SET GROUP =====
-    const PROSPECTS_API = 'https://informativ-sales-api.netlify.app/api/cs/prospects';
-    const PROSPECTS_HEADERS = { 'Content-Type': 'application/json', 'X-API-Key': 'UI37Oom7hb8WodwTginyz_a4IcgvyvVZQzWSGDrRhhA' };
+    const PROSPECTS_API = API_PROXY + '?path=/api/cs/prospects';
+    const PROSPECTS_HEADERS = API_HEADERS;
     var _mobileCustomProspects = {};
     var _mobileGroupAssocs = {};
     var _mobileAdditionalContacts = {};
@@ -6002,7 +6005,7 @@
       if (!group || !recordId) return;
       var currentRep = typeof selectedRep !== 'undefined' ? selectedRep : 'Unknown';
       try {
-        var resp = await fetch(PROSPECTS_API + '?action=set_group', {
+        var resp = await fetch(PROSPECTS_API + '&action=set_group', {
           method: 'POST', headers: PROSPECTS_HEADERS,
           body: JSON.stringify({ record_id: recordId, group: group, set_by: currentRep })
         });
@@ -6014,7 +6017,7 @@
           buildMobileGroupIndex();
         }
       } catch(e) {
-        queueOfflineAction({ endpoint: PROSPECTS_API + '?action=set_group', payload: { record_id: recordId, group: group, set_by: currentRep } });
+        queueOfflineAction({ endpoint: PROSPECTS_API + '&action=set_group', payload: { record_id: recordId, group: group, set_by: currentRep } });
       }
     }
 
@@ -6114,7 +6117,7 @@
         created_by: typeof selectedRep !== 'undefined' ? selectedRep : 'Unknown'
       };
       try {
-        var resp = await fetch(PROSPECTS_API + '?action=add_store', {
+        var resp = await fetch(PROSPECTS_API + '&action=add_store', {
           method: 'POST', headers: PROSPECTS_HEADERS, body: JSON.stringify(payload)
         });
         var data = await resp.json();
@@ -6164,7 +6167,7 @@
         added_by: typeof selectedRep !== 'undefined' ? selectedRep : 'Unknown'
       };
       try {
-        await fetch(PROSPECTS_API + '?action=add_contact', {
+        await fetch(PROSPECTS_API + '&action=add_contact', {
           method: 'POST', headers: PROSPECTS_HEADERS, body: JSON.stringify(payload)
         });
         if (!_mobileAdditionalContacts[recordId]) _mobileAdditionalContacts[recordId] = [];
@@ -6197,7 +6200,7 @@
       if (!currentProspect || !group) return;
       var recordId = String(currentProspect.id || currentProspect.co || '');
       try {
-        await fetch(PROSPECTS_API + '?action=set_group', {
+        await fetch(PROSPECTS_API + '&action=set_group', {
           method: 'POST', headers: PROSPECTS_HEADERS,
           body: JSON.stringify({ record_id: recordId, group: group, set_by: typeof selectedRep !== 'undefined' ? selectedRep : 'Unknown' })
         });
@@ -6232,7 +6235,7 @@
         const url = new URL(event.request.url);
         // Only cache same-origin navigation and static assets
         if (event.request.method !== 'GET') return;
-        if (url.pathname.startsWith('/.netlify/functions/')) return; // Don't cache API calls
+        if (url.pathname.startsWith('/.netlify/functions/api-proxy')) return; // Don't cache API proxy calls
 
         event.respondWith(
           caches.match(event.request).then(cached => {
