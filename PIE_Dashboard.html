@@ -1102,12 +1102,34 @@ try{var parts=u.token.access_token.split('.');var payload=JSON.parse(atob(parts[
 if(refreshIn>0){setTimeout(function(){if(window.netlifyIdentity){var c=window.netlifyIdentity.currentUser();if(c)c.jwt().then(function(t){window._identityToken=t;scheduleTokenRefresh(c)})}},refreshIn)}
 }catch(e){setTimeout(function(){if(window.netlifyIdentity){var c=window.netlifyIdentity.currentUser();if(c)c.jwt().then(function(t){window._identityToken=t})}},50*60*1000)}
 }
-function init(){var loginBtn=document.getElementById('identity-login-btn');
-if(loginBtn)loginBtn.addEventListener('click',function(){if(window.netlifyIdentity)window.netlifyIdentity.open('login')});
-if(!window.netlifyIdentity){console.warn('[Identity] Widget not loaded');return}
-window.netlifyIdentity.on('init',function(u){if(u){u.jwt().then(function(t){window._identityToken=t;u.token=u.token||{};u.token.access_token=t;handleLogin(u);scheduleTokenRefresh(u)}).catch(function(){})}});
-window.netlifyIdentity.on('login',function(u){handleLogin(u);scheduleTokenRefresh(u);window.netlifyIdentity.close()});
-window.netlifyIdentity.on('logout',function(){handleLogout()});
+function init(){
+var GOTRUE='https://informativ-sales-api.netlify.app/.netlify/identity';
+var btn=document.getElementById('identity-login-btn');
+var emailEl=document.getElementById('identity-email');
+var pwEl=document.getElementById('identity-password');
+var errEl=document.getElementById('identity-error');
+function doLogin(){
+var email=emailEl?emailEl.value.trim():'';
+var pw=pwEl?pwEl.value:'';
+if(!email||!pw){if(errEl){errEl.textContent='Please enter your email and password.';errEl.style.display='block';}return;}
+if(btn){btn.textContent='Signing in...';btn.disabled=true;}
+if(errEl)errEl.style.display='none';
+fetch(GOTRUE+'/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=password&username='+encodeURIComponent(email)+'&password='+encodeURIComponent(pw)})
+.then(function(r){return r.json();})
+.then(function(d){
+if(d.access_token){
+window._identityToken=d.access_token;
+try{var p=JSON.parse(atob(d.access_token.split('.')[1]));window._identityUser={email:email,id:p.sub,roles:(p.app_metadata||{}).roles||[],team:(p.app_metadata||{}).team||null,rep_name:(p.app_metadata||{}).rep_name||null};}catch(e){window._identityUser={email:email,id:'',roles:[],team:null,rep_name:null};}
+removeLoginOverlay();createUserPill({email:email,token:{access_token:d.access_token}});
+window.dispatchEvent(new CustomEvent('identity:login',{detail:window._identityUser}));
+}else{
+if(errEl){errEl.textContent=(d.error_description||'Invalid email or password. Please try again.');errEl.style.display='block';}
+if(btn){btn.textContent='Sign In';btn.disabled=false;}
+}})
+.catch(function(){if(errEl){errEl.textContent='Connection error. Please try again.';errEl.style.display='block';}if(btn){btn.textContent='Sign In';btn.disabled=false;}});
+}
+if(btn)btn.addEventListener('click',doLogin);
+if(pwEl)pwEl.addEventListener('keypress',function(e){if(e.key==='Enter')doLogin();});
 }
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init)}else{init()}
 })();
@@ -1115,7 +1137,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 
 </head>
 <body>
-<div id="identity-overlay" style="position:fixed;inset:0;background:rgba(0,20,50,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;font-family:Plus Jakarta Sans,sans-serif"><div style="background:#fff;border-radius:16px;padding:48px 40px;max-width:400px;width:90%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.3)"><div style="width:56px;height:56px;background:linear-gradient(135deg,#6627E8,#002757);border-radius:12px;margin:0 auto 24px;display:flex;align-items:center;justify-content:center"><svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h2 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#002757">Informativ</h2><p style="margin:0 0 32px;font-size:14px;color:#6B7280">Sign in to continue</p><button id="identity-login-btn" style="width:100%;padding:14px 24px;background:linear-gradient(135deg,#6627E8,#4F1FBA);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.02em">Sign In</button></div></div></div>
+<div id="identity-overlay" style="position:fixed;inset:0;background:rgba(0,20,50,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;font-family:Plus Jakarta Sans,sans-serif"><div style="background:#fff;border-radius:16px;padding:40px;max-width:400px;width:90%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.3)"><div style="width:56px;height:56px;background:linear-gradient(135deg,#6627E8,#002757);border-radius:12px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center"><svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h2 style="margin:0 0 6px;font-size:22px;font-weight:800;color:#002757">Informativ</h2><p style="margin:0 0 24px;font-size:14px;color:#6B7280">Sign in to continue</p><input id="identity-email" type="email" placeholder="Email address" autocomplete="email" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1.5px solid #E5E7EB;border-radius:8px;font-size:14px;margin-bottom:10px;outline:none"><input id="identity-password" type="password" placeholder="Password" autocomplete="current-password" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1.5px solid #E5E7EB;border-radius:8px;font-size:14px;margin-bottom:10px;outline:none"><div id="identity-error" style="display:none;color:#DC2626;font-size:13px;margin-bottom:10px;padding:8px;background:#FEF2F2;border-radius:6px"></div><button id="identity-login-btn" style="width:100%;padding:13px 24px;background:linear-gradient(135deg,#6627E8,#4F1FBA);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.02em">Sign In</button></div></div>
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-brand">
