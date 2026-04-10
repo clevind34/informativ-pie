@@ -1,7 +1,7 @@
-// Universal API proxy — injects API key server-side so it never appears in client code.
+// Universal API proxy — injects API key server-side and forwards user JWT.
 // Deploy identical copy to every consumer site.
 // Browser calls: /.netlify/functions/api-proxy?path=/api/cs/routes&rep=Name
-// Proxy forwards to gateway with X-API-Key header attached.
+// Proxy forwards to gateway with X-API-Key + Authorization headers.
 
 const GATEWAY = 'https://informativ-sales-api.netlify.app';
 
@@ -12,7 +12,7 @@ export async function handler(event) {
       statusCode: 204,
       headers: {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
         'Access-Control-Max-Age': '86400',
       },
@@ -38,12 +38,20 @@ export async function handler(event) {
   }
 
   try {
+    const fetchHeaders = {
+      'Content-Type': 'application/json',
+      'X-API-Key': apiKey,
+    };
+
+    // Forward user JWT if present (Netlify Identity session)
+    const authHeader = (event.headers || {}).authorization || '';
+    if (authHeader.startsWith('Bearer ')) {
+      fetchHeaders['Authorization'] = authHeader;
+    }
+
     const fetchOpts = {
       method: event.httpMethod,
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': apiKey,
-      },
+      headers: fetchHeaders,
     };
     if (event.body && event.httpMethod !== 'GET') {
       fetchOpts.body = event.body;
@@ -56,7 +64,7 @@ export async function handler(event) {
     const responseHeaders = {
       'Content-Type': resp.headers.get('content-type') || 'application/json',
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     };
     const etag = resp.headers.get('etag');
     if (etag) responseHeaders['ETag'] = etag;
