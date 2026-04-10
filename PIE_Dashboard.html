@@ -1103,10 +1103,8 @@ if(refreshIn>0){setTimeout(function(){if(window.netlifyIdentity){var c=window.ne
 }catch(e){setTimeout(function(){if(window.netlifyIdentity){var c=window.netlifyIdentity.currentUser();if(c)c.jwt().then(function(t){window._identityToken=t})}},50*60*1000)}
 }
 function init(){
-if(!window.netlifyIdentity){console.warn('[Identity] Widget not loaded');return}
-var u=window.netlifyIdentity.currentUser();
-if(u){u.jwt().then(function(t){window._identityToken=t;u.token=u.token||{};u.token.access_token=t;handleLogin(u);scheduleTokenRefresh(u)}).catch(function(){handleLogout()})}
-else{createLoginOverlay()}
+if(!window.netlifyIdentity){console.warn('[Identity] Widget not loaded');createLoginOverlay();return}
+window.netlifyIdentity.on('init',function(u){if(u){u.jwt().then(function(t){window._identityToken=t;u.token=u.token||{};u.token.access_token=t;handleLogin(u);scheduleTokenRefresh(u)}).catch(function(){createLoginOverlay()})}else{createLoginOverlay()}});
 window.netlifyIdentity.on('login',function(u){handleLogin(u);scheduleTokenRefresh(u);window.netlifyIdentity.close()});
 window.netlifyIdentity.on('logout',function(){handleLogout()});
 }
