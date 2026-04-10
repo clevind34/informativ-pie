@@ -1101,6 +1101,35 @@ if(refreshIn>0){setTimeout(function(){if(window.netlifyIdentity){var c=window.ne
 }
 function init(){
 var GOTRUE='https://informativ-sales-api.netlify.app/.netlify/identity';
+function showView(v){['login','reset','newpw'].forEach(function(n){var el=document.getElementById('identity-'+n+'-view');if(el)el.style.display=(n===v?'block':'none');});}
+function setMsg(id,text,isError){var el=document.getElementById(id);if(!el)return;el.textContent=text;el.style.background=isError?'#FEF2F2':'#F0FDF4';el.style.color=isError?'#DC2626':'#166534';el.style.display='block';}
+// Check for recovery token in URL hash
+var hash=window.location.hash||'';
+var recoveryMatch=hash.match(/recovery_token=([^&]+)/);
+var recoveryToken=recoveryMatch?recoveryMatch[1]:null;
+if(recoveryToken){
+showView('newpw');
+var titleEl=document.getElementById('identity-title');var subEl=document.getElementById('identity-subtitle');
+if(titleEl)titleEl.textContent='Set New Password';if(subEl)subEl.textContent='Enter your new password below';
+var npBtn=document.getElementById('identity-newpw-btn');
+if(npBtn)npBtn.addEventListener('click',function(){
+var pw1=document.getElementById('identity-new-password').value;
+var pw2=document.getElementById('identity-new-password2').value;
+if(!pw1||pw1.length<8){setMsg('identity-newpw-msg','Password must be at least 8 characters.',true);return;}
+if(pw1!==pw2){setMsg('identity-newpw-msg','Passwords do not match.',true);return;}
+npBtn.textContent='Saving...';npBtn.disabled=true;
+fetch(GOTRUE+'/user',{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+recoveryToken},body:JSON.stringify({password:pw1})})
+.then(function(r){return r.json();})
+.then(function(d){
+if(d.email){setMsg('identity-newpw-msg','Password updated! Signing you in...',false);
+fetch(GOTRUE+'/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=password&username='+encodeURIComponent(d.email)+'&password='+encodeURIComponent(pw1)})
+.then(function(r2){return r2.json();}).then(function(d2){if(d2.access_token){window._identityToken=d2.access_token;try{var p=JSON.parse(atob(d2.access_token.split('.')[1]));window._identityUser={email:d.email,id:p.sub,roles:(p.app_metadata||{}).roles||[],team:(p.app_metadata||{}).team||null,rep_name:(p.app_metadata||{}).rep_name||null};}catch(e){window._identityUser={email:d.email,id:'',roles:[],team:null,rep_name:null};}window.history.replaceState(null,'',window.location.pathname);removeLoginOverlay();createUserPill({email:d.email,token:{access_token:d2.access_token}});window.dispatchEvent(new CustomEvent('identity:login',{detail:window._identityUser}));}}).catch(function(){setMsg('identity-newpw-msg','Password set. Please sign in.',false);setTimeout(function(){showView('login');},2000);});
+}else{setMsg('identity-newpw-msg',d.error_description||'Error setting password.',true);npBtn.textContent='Set New Password';npBtn.disabled=false;}})
+.catch(function(){setMsg('identity-newpw-msg','Connection error. Please try again.',true);npBtn.textContent='Set New Password';npBtn.disabled=false;});
+});
+return;}
+// Normal login flow
+showView('login');
 var btn=document.getElementById('identity-login-btn');
 var emailEl=document.getElementById('identity-email');
 var pwEl=document.getElementById('identity-password');
@@ -1127,6 +1156,26 @@ if(btn){btn.textContent='Sign In';btn.disabled=false;}
 }
 if(btn)btn.addEventListener('click',doLogin);
 if(pwEl)pwEl.addEventListener('keypress',function(e){if(e.key==='Enter')doLogin();});
+var forgotLink=document.getElementById('identity-forgot-link');
+if(forgotLink)forgotLink.addEventListener('click',function(e){e.preventDefault();
+var titleEl=document.getElementById('identity-title');var subEl=document.getElementById('identity-subtitle');
+if(titleEl)titleEl.textContent='Reset Password';if(subEl)subEl.textContent='Enter your email and we\'ll send a reset link';
+showView('reset');});
+var resetBtn=document.getElementById('identity-reset-btn');
+if(resetBtn)resetBtn.addEventListener('click',function(){
+var resetEmail=document.getElementById('identity-reset-email');
+var email=resetEmail?resetEmail.value.trim():'';
+if(!email){setMsg('identity-reset-msg','Please enter your email address.',true);return;}
+resetBtn.textContent='Sending...';resetBtn.disabled=true;
+fetch(GOTRUE+'/recover',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})})
+.then(function(){setMsg('identity-reset-msg','Reset email sent! Check your inbox.',false);resetBtn.textContent='Sent';})
+.catch(function(){setMsg('identity-reset-msg','Error sending email. Please try again.',true);resetBtn.textContent='Send Reset Email';resetBtn.disabled=false;});
+});
+var backLink=document.getElementById('identity-back-link');
+if(backLink)backLink.addEventListener('click',function(e){e.preventDefault();
+var titleEl=document.getElementById('identity-title');var subEl=document.getElementById('identity-subtitle');
+if(titleEl)titleEl.textContent='Informativ';if(subEl)subEl.textContent='Sign in to continue';
+showView('login');});
 }
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init)}else{init()}
 })();
