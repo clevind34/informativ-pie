@@ -1193,10 +1193,53 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 </script>
 
 </head>
+<body><script>/* gateway SSO token pass-through v4 - resilient with fallback */
+try {
+  (function(){
+    try {
+      var h=window.location.hash||"";
+      var m=h.match(/[#&]gw=([^&]+)/);
+      if(!m) {
+        setTimeout(function() {
+          var o=document.getElementById("identity-overlay");
+          if(o) { o.style.transition="opacity 0.3s"; o.style.opacity="0"; }
+        }, 1500);
+        return;
+      }
+      var tok=decodeURIComponent(m[1]);
+      history.replaceState(null,"",window.location.pathname+window.location.search);
+      var raw=tok.split(".")[1];
+      raw=raw.replace(/-/g,"+").replace(/_/g,"/");
+      while(raw.length%4)raw+="=";
+      var p=JSON.parse(atob(raw));
+      var meta=p.app_metadata||{};
+      var roles=meta.roles||[];
+      var email=(p.email||"").toLowerCase();
+      var EM_ROLE={"mbyrd@informativ.com":"admin","cbyrd@informativ.com":"admin","dcarner@informativ.com":"elt","klang@informativ.com":"elt","nbrignola@informativ.com":"elt","tbordenet@informativ.com":"manager","jcarlucci@informativ.com":"manager","cknievel@informativ.com":"manager","ksandoval@informativ.com":"manager","csanford@informativ.com":"rep","mhanaman@informativ.com":"rep","trighter@informativ.com":"rep","tsmith@informativ.com":"rep","cromero@informativ.com":"rep","agough@informativ.com":"rep","wcarroll@informativ.com":"rep","wfowler@informativ.com":"rep","bhutchinson@informativ.com":"rep","calvarado@informativ.com":"rep","tcanley@informativ.com":"rep","asweet@informativ.com":"cs","cmanz@informativ.com":"cs","cbouvier@informativ.com":"cs","ischweitzer@informativ.com":"cs","jcraddock@informativ.com":"cs","kbutler@informativ.com":"cs","kfelder@informativ.com":"cs","mmiller@informativ.com":"cs","rdoo@informativ.com":"cs","rgomez@informativ.com":"cs"};
+      var EM_NAME={"mbyrd@informativ.com":"Michael Byrd","cbyrd@informativ.com":"Carson Byrd","dcarner@informativ.com":"David Carner","klang@informativ.com":"Kimberly Lang","nbrignola@informativ.com":"Nick Brignola","tbordenet@informativ.com":"Teresa Bordenet","jcarlucci@informativ.com":"Joel Carlucci","cknievel@informativ.com":"Curtis Knievel","ksandoval@informativ.com":"Kiristen Sandoval","csanford@informativ.com":"Carol Sanford","mhanaman@informativ.com":"Matt Hanaman","trighter@informativ.com":"Tami Richter","tsmith@informativ.com":"Trish Smith","cromero@informativ.com":"Clarence Romero","agough@informativ.com":"Ashton Gough","wcarroll@informativ.com":"Ward Carroll","wfowler@informativ.com":"William Fowler","bhutchinson@informativ.com":"Brock Hutchinson","calvarado@informativ.com":"Crly Alvarado","tcanley@informativ.com":"Tim Canley","asweet@informativ.com":"Andrea Sweet","cmanz@informativ.com":"Chad Manz","cbouvier@informativ.com":"Chaquowa Bouvier","ischweitzer@informativ.com":"Irma Schweitzer","jcraddock@informativ.com":"Jennifer Craddock","kbutler@informativ.com":"Kedrick Butler","kfelder@informativ.com":"Kelly Felder","mmiller@informativ.com":"Melissa Miller","rdoo@informativ.com":"Robert Doo","rgomez@informativ.com":"Ruby Gomez"};
+      if(!roles.length&&EM_ROLE[email])roles=[EM_ROLE[email]];
+      var name=EM_NAME[email]||email.split("@")[0];
+      var user={email:email,id:p.sub||"",roles:roles,rep_name:name};
+      window._identityToken=tok;
+      window._identityUser=user;
+      window.addEventListener("DOMContentLoaded",function(){
+        var o=document.getElementById("identity-overlay");
+        if(o) { o.style.transition="opacity 0.3s"; o.style.opacity="0"; setTimeout(function(){if(o.parentNode)o.parentNode.removeChild(o);},350); }
+        window.dispatchEvent(new CustomEvent("identity:login",{detail:user}));
+      });
+    } catch(e) {
+      console.error("SSO parse error:",e);
+      setTimeout(function() { var o=document.getElementById("identity-overlay"); if(o) o.style.opacity="0"; }, 1500);
+    }
+  })();
+} catch(e) {
+  console.error("SSO error:",e);
+  setTimeout(function() { var o=document.getElementById("identity-overlay"); if(o) o.style.opacity="0"; }, 2000);
+}
+</script>
+
+</head>
 <body>
-<script>/* gateway SSO token pass-through v4 */(function(){try{var h=window.location.hash||"";var m=h.match(/[#&]gw=([^&]+)/);if(!m)return;var tok=decodeURIComponent(m[1]);history.replaceState(null,"",window.location.pathname+window.location.search);var raw=tok.split(".")[1];raw=raw.replace(/-/g,"+").replace(/_/g,"/");while(raw.length%4)raw+="=";var p=JSON.parse(atob(raw));var meta=p.app_metadata||{};var roles=meta.roles||[];var email=(p.email||"").toLowerCase();var EM_ROLE={"mbyrd@informativ.com":"admin","cbyrd@informativ.com":"admin","dcarner@informativ.com":"elt","klang@informativ.com":"elt","nbrignola@informativ.com":"elt","tbordenet@informativ.com":"manager","jcarlucci@informativ.com":"manager","cknievel@informativ.com":"manager","ksandoval@informativ.com":"manager","csanford@informativ.com":"rep","mhanaman@informativ.com":"rep","trighter@informativ.com":"rep","tsmith@informativ.com":"rep","cromero@informativ.com":"rep","agough@informativ.com":"rep","wcarroll@informativ.com":"rep","wfowler@informativ.com":"rep","bhutchinson@informativ.com":"rep","calvarado@informativ.com":"rep","tcanley@informativ.com":"rep","asweet@informativ.com":"cs","cmanz@informativ.com":"cs","cbouvier@informativ.com":"cs","ischweitzer@informativ.com":"cs","jcraddock@informativ.com":"cs","kbutler@informativ.com":"cs","kfelder@informativ.com":"cs","mmiller@informativ.com":"cs","rdoo@informativ.com":"cs","rgomez@informativ.com":"cs"};var EM_NAME={"mbyrd@informativ.com":"Michael Byrd","cbyrd@informativ.com":"Carson Byrd","dcarner@informativ.com":"David Carner","klang@informativ.com":"Kimberly Lang","nbrignola@informativ.com":"Nick Brignola","tbordenet@informativ.com":"Teresa Bordenet","jcarlucci@informativ.com":"Joel Carlucci","cknievel@informativ.com":"Curtis Knievel","ksandoval@informativ.com":"Kiristen Sandoval","csanford@informativ.com":"Carol Sanford","mhanaman@informativ.com":"Matt Hanaman","trighter@informativ.com":"Tami Richter","tsmith@informativ.com":"Trish Smith","cromero@informativ.com":"Clarence Romero","agough@informativ.com":"Ashton Gough","wcarroll@informativ.com":"Ward Carroll","wfowler@informativ.com":"William Fowler","bhutchinson@informativ.com":"Brock Hutchinson","calvarado@informativ.com":"Crly Alvarado","tcanley@informativ.com":"Tim Canley","asweet@informativ.com":"Andrea Sweet","cmanz@informativ.com":"Chad Manz","cbouvier@informativ.com":"Chaquowa Bouvier","ischweitzer@informativ.com":"Irma Schweitzer","jcraddock@informativ.com":"Jennifer Craddock","kbutler@informativ.com":"Kedrick Butler","kfelder@informativ.com":"Kelly Felder","mmiller@informativ.com":"Melissa Miller","rdoo@informativ.com":"Robert Doo","rgomez@informativ.com":"Ruby Gomez"};if(!roles.length&&EM_ROLE[email])roles=[EM_ROLE[email]];var name=EM_NAME[email]||email.split("@")[0];var user={email:email,id:p.sub||"",roles:roles,rep_name:name};window._identityToken=tok;window._identityUser=user;window.addEventListener("DOMContentLoaded",function(){var o=document.getElementById("identity-overlay");if(o){o.style.transition="opacity 0.3s";o.style.opacity="0";setTimeout(function(){if(o.parentNode)o.parentNode.removeChild(o);},350);}if(typeof createUserPill==="function")createUserPill({email:email,token:{access_token:tok}});window.dispatchEvent(new CustomEvent("identity:login",{detail:user}));});}catch(e){console.error("SSO pass-through error:",e)}})();</script>
-
-
 <div id="identity-overlay" style="position:fixed;inset:0;background:rgba(0,20,50,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;font-family:Plus Jakarta Sans,sans-serif"><div style="background:#fff;border-radius:16px;padding:40px;max-width:400px;width:90%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.3)"><div style="width:56px;height:56px;background:linear-gradient(135deg,#6627E8,#002757);border-radius:12px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center"><svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h2 style="margin:0 0 6px;font-size:22px;font-weight:800;color:#002757">Informativ</h2><p style="margin:0 0 24px;font-size:14px;color:#6B7280">Sign in to continue</p><input id="identity-email" type="email" placeholder="Email address" autocomplete="email" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1.5px solid #E5E7EB;border-radius:8px;font-size:14px;margin-bottom:10px;outline:none"><input id="identity-password" type="password" placeholder="Password" autocomplete="current-password" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1.5px solid #E5E7EB;border-radius:8px;font-size:14px;margin-bottom:10px;outline:none"><div id="identity-error" style="display:none;color:#DC2626;font-size:13px;margin-bottom:10px;padding:8px;background:#FEF2F2;border-radius:6px"></div><button id="identity-login-btn" style="width:100%;padding:13px 24px;background:linear-gradient(135deg,#6627E8,#4F1FBA);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.02em">Sign In</button></div></div>
     <!-- SIDEBAR -->
     <aside class="sidebar">
