@@ -1102,8 +1102,8 @@ try{var parts=u.token.access_token.split('.');var payload=JSON.parse(atob(parts[
 if(refreshIn>0){setTimeout(function(){if(window.netlifyIdentity){var c=window.netlifyIdentity.currentUser();if(c)c.jwt().then(function(t){window._identityToken=t;scheduleTokenRefresh(c)})}},refreshIn)}
 }catch(e){setTimeout(function(){if(window.netlifyIdentity){var c=window.netlifyIdentity.currentUser();if(c)c.jwt().then(function(t){window._identityToken=t})}},50*60*1000)}
 }
-function init(){
-createLoginOverlay();
+function init(){var loginBtn=document.getElementById('identity-login-btn');
+if(loginBtn)loginBtn.addEventListener('click',function(){if(window.netlifyIdentity)window.netlifyIdentity.open('login')});
 if(!window.netlifyIdentity){console.warn('[Identity] Widget not loaded');return}
 window.netlifyIdentity.on('init',function(u){if(u){u.jwt().then(function(t){window._identityToken=t;u.token=u.token||{};u.token.access_token=t;handleLogin(u);scheduleTokenRefresh(u)}).catch(function(){})}});
 window.netlifyIdentity.on('login',function(u){handleLogin(u);scheduleTokenRefresh(u);window.netlifyIdentity.close()});
@@ -1115,6 +1115,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 
 </head>
 <body>
+<div id="identity-overlay" style="position:fixed;inset:0;background:rgba(0,20,50,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;font-family:Plus Jakarta Sans,sans-serif"><div style="background:#fff;border-radius:16px;padding:48px 40px;max-width:400px;width:90%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.3)"><div style="width:56px;height:56px;background:linear-gradient(135deg,#6627E8,#002757);border-radius:12px;margin:0 auto 24px;display:flex;align-items:center;justify-content:center"><svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h2 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#002757">Informativ</h2><p style="margin:0 0 32px;font-size:14px;color:#6B7280">Sign in to continue</p><button id="identity-login-btn" style="width:100%;padding:14px 24px;background:linear-gradient(135deg,#6627E8,#4F1FBA);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.02em">Sign In</button></div></div></div>
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-brand">
