@@ -2636,32 +2636,34 @@ try {
 
         // ===== RESTORE STATE FROM FEEDBACK HISTORY =====
         function restoreProspectState() {
-            // Restore flagged-as-customer and reassignment state from feedbackHistory
-            feedbackHistory.forEach(fb => {
-                const name = (fb.prospectName || '').toLowerCase().trim();
-                const type = fb.prospectType;
+            if (!feedbackHistory.length) return;
+            // Build hash maps for O(1) lookup instead of O(n) .find() per feedback entry
+            var nnMap = {};
+            allNetNewProspects.forEach(function(p) {
+                var key = (p.company_name || '').toLowerCase().trim();
+                if (key) nnMap[key] = p;
+            });
+            var csMap = {};
+            allCrossSellAccounts.forEach(function(a) {
+                var key = (a.account_name || '').toLowerCase().trim();
+                if (key) csMap[key] = a;
+            });
+
+            feedbackHistory.forEach(function(fb) {
+                var name = (fb.prospectName || '').toLowerCase().trim();
+                var type = fb.prospectType;
                 if (!name || !type) return;
 
                 // Restore flag-as-customer
                 if (fb.disposition === 'Already a Customer' || fb.disposition === 'Already Upgraded') {
-                    if (type === 'net_new') {
-                        const p = allNetNewProspects.find(pr => (pr.company_name || '').toLowerCase().trim() === name);
-                        if (p) p._flaggedCustomer = true;
-                    } else if (type === 'cross_sell') {
-                        const a = allCrossSellAccounts.find(ac => (ac.account_name || '').toLowerCase().trim() === name);
-                        if (a) a._flaggedCustomer = true;
-                    }
+                    if (type === 'net_new' && nnMap[name]) nnMap[name]._flaggedCustomer = true;
+                    else if (type === 'cross_sell' && csMap[name]) csMap[name]._flaggedCustomer = true;
                 }
 
                 // Restore reassignments (last reassignment wins)
                 if (fb.disposition === 'Reassigned' && fb.assignedRep) {
-                    if (type === 'net_new') {
-                        const p = allNetNewProspects.find(pr => (pr.company_name || '').toLowerCase().trim() === name);
-                        if (p) p.assigned_rep = fb.assignedRep;
-                    } else if (type === 'cross_sell') {
-                        const a = allCrossSellAccounts.find(ac => (ac.account_name || '').toLowerCase().trim() === name);
-                        if (a) a.assigned_rep = fb.assignedRep;
-                    }
+                    if (type === 'net_new' && nnMap[name]) nnMap[name].assigned_rep = fb.assignedRep;
+                    else if (type === 'cross_sell' && csMap[name]) csMap[name].assigned_rep = fb.assignedRep;
                 }
             });
         }
@@ -2758,10 +2760,15 @@ try {
             // Initialize data structures (same as old synchronous path)
             var _t1 = performance.now();
             pieData = loadPIEData();
+            console.log('PIE: loadPIEData in ' + Math.round(performance.now() - _t1) + 'ms');
+            var _t2 = performance.now();
             generateAffiliateLeads();
+            console.log('PIE: generateAffiliateLeads in ' + Math.round(performance.now() - _t2) + 'ms');
+            var _t3 = performance.now();
             restoreProspectState();
+            console.log('PIE: restoreProspectState in ' + Math.round(performance.now() - _t3) + 'ms (feedbackHistory: ' + feedbackHistory.length + ')');
             _pieDataLoaded = true;
-            console.log('PIE: Data init in ' + Math.round(performance.now() - _t1) + 'ms');
+            console.log('PIE: Data init total in ' + Math.round(performance.now() - _t1) + 'ms');
 
             // Remove loading overlay
             if (overlay) {
