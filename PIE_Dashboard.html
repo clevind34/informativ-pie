@@ -6,10 +6,10 @@
     <title>PIE Dashboard - Prospecting Intelligence Engine</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Preload data files — starts download immediately, in parallel with HTML/CSS parsing -->
-    <link rel="preload" href="pie-data-nn.json" as="fetch">
-    <link rel="preload" href="pie-data-cs.json" as="fetch">
-    <link rel="preload" href="pie-data-aff.json" as="fetch">
+    <!-- Preload data files — crossorigin="anonymous" matches fetch() default credentials:"same-origin" -->
+    <link rel="preload" href="pie-data-nn.json" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="pie-data-cs.json" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="pie-data-aff.json" as="fetch" crossorigin="anonymous">
     <script>
         // Start fetches BEFORE browser parses rest of page — same pattern as CI Dashboard
         window._pieStartTime = performance.now();
