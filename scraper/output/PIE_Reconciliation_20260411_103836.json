@@ -1,0 +1,1593 @@
+{
+  "generated_at": "2026-04-11T16:30:18.161412+00:00",
+  "summary": {
+    "total_dealers_scraped": 2319,
+    "total_suppressed": 221,
+    "total_net_new": 2098,
+    "overall_suppression_rate": 9.5,
+    "avg_data_completeness": 31.9
+  },
+  "field_completeness": {
+    "dealership_name": {
+      "populated": 2319,
+      "missing": 0,
+      "capture_rate": 100.0
+    },
+    "website_url": {
+      "populated": 435,
+      "missing": 1884,
+      "capture_rate": 18.8
+    },
+    "city": {
+      "populated": 350,
+      "missing": 1969,
+      "capture_rate": 15.1
+    },
+    "state": {
+      "populated": 2319,
+      "missing": 0,
+      "capture_rate": 100.0
+    },
+    "phone": {
+      "populated": 388,
+      "missing": 1931,
+      "capture_rate": 16.7
+    },
+    "oem_brand": {
+      "populated": 2319,
+      "missing": 0,
+      "capture_rate": 100.0
+    },
+    "contact_name": {
+      "populated": 0,
+      "missing": 2319,
+      "capture_rate": 0.0
+    },
+    "contact_title": {
+      "populated": 0,
+      "missing": 2319,
+      "capture_rate": 0.0
+    },
+    "contact_email": {
+      "populated": 0,
+      "missing": 2319,
+      "capture_rate": 0.0
+    },
+    "contact_phone": {
+      "populated": 0,
+      "missing": 2319,
+      "capture_rate": 0.0
+    },
+    "new_inventory_count": {
+      "populated": 0,
+      "missing": 2319,
+      "capture_rate": 0.0
+    },
+    "used_inventory_count": {
+      "populated": 0,
+      "missing": 2319,
+      "capture_rate": 0.0
+    },
+    "estimated_vehicles_sold": {
+      "populated": 0,
+      "missing": 2319,
+      "capture_rate": 0.0
+    },
+    "dealer_group": {
+      "populated": 0,
+      "missing": 2319,
+      "capture_rate": 0.0
+    }
+  },
+  "territory_breakdown": {
+    "Central Atlantic": {
+      "total_scraped": 634,
+      "suppressed": 62,
+      "net_new": 572,
+      "with_contact": 0,
+      "with_inventory": 0,
+      "with_email": 0,
+      "avg_completeness": 32.0
+    },
+    "Central": {
+      "total_scraped": 893,
+      "suppressed": 53,
+      "net_new": 840,
+      "with_contact": 0,
+      "with_inventory": 0,
+      "with_email": 0,
+      "avg_completeness": 31.7
+    },
+    "South East": {
+      "total_scraped": 584,
+      "suppressed": 77,
+      "net_new": 507,
+      "with_contact": 0,
+      "with_inventory": 0,
+      "with_email": 0,
+      "avg_completeness": 32.3
+    },
+    "California": {
+      "total_scraped": 208,
+      "suppressed": 29,
+      "net_new": 179,
+      "with_contact": 0,
+      "with_inventory": 0,
+      "with_email": 0,
+      "avg_completeness": 31.1
+    }
+  },
+  "oem_breakdown": {
+    "Toyota": {
+      "total": 148,
+      "suppressed": 19,
+      "with_inventory": 0
+    },
+    "Honda": {
+      "total": 41,
+      "suppressed": 0,
+      "with_inventory": 0
+    },
+    "Ford": {
+      "total": 353,
+      "suppressed": 33,
+      "with_inventory": 0
+    },
+    "Chevrolet": {
+      "total": 16,
+      "suppressed": 0,
+      "with_inventory": 0
+    },
+    "Nissan": {
+      "total": 137,
+      "suppressed": 34,
+      "with_inventory": 0
+    },
+    "Hyundai": {
+      "total": 274,
+      "suppressed": 21,
+      "with_inventory": 0
+    },
+    "Kia": {
+      "total": 525,
+      "suppressed": 66,
+      "with_inventory": 0
+    },
+    "Subaru": {
+      "total": 241,
+      "suppressed": 0,
+      "with_inventory": 0
+    },
+    "Volkswagen": {
+      "total": 92,
+      "suppressed": 0,
+      "with_inventory": 0
+    },
+    "Mazda": {
+      "total": 90,
+      "suppressed": 12,
+      "with_inventory": 0
+    },
+    "BMW": {
+      "total": 291,
+      "suppressed": 36,
+      "with_inventory": 0
+    },
+    "Mercedes-Benz": {
+      "total": 95,
+      "suppressed": 0,
+      "with_inventory": 0
+    },
+    "Audi": {
+      "total": 16,
+      "suppressed": 0,
+      "with_inventory": 0
+    }
+  },
+  "suppression_analysis": {
+    "total_suppressed": 221,
+    "by_reason": {
+      "substring_match": 179,
+      "exact_name_match": 41,
+      "fuzzy_name_state_match": 1
+    },
+    "suppressed_dealers": [
+      {
+        "name": "found\n1\nLeith Toyota",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "Leith Toyota"
+      },
+      {
+        "name": "Learn More\n\nToyota Express Maintenance",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "Learn More\n\nToyota Express Maintenance",
+        "state": "SC",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "Learn More\n\nToyota Express Maintenance",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "found\n1\nVictory Toyota Charleston",
+        "state": "WV",
+        "reason": "substring_match",
+        "matched": "Victory Toyota"
+      },
+      {
+        "name": "Learn More\n\nToyota Express Maintenance",
+        "state": "WV",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "Leith Ford",
+        "state": "NC",
+        "reason": "exact_name_match",
+        "matched": "Leith Ford"
+      },
+      {
+        "name": "Country Ford Inc",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "Rockdale Country Ford"
+      },
+      {
+        "name": "Parks Ford",
+        "state": "NC",
+        "reason": "exact_name_match",
+        "matched": "Parks Ford"
+      },
+      {
+        "name": "Jones Ford",
+        "state": "SC",
+        "reason": "substring_match",
+        "matched": "Mike Jones Ford Lincoln"
+      },
+      {
+        "name": "Fairway Ford Inc",
+        "state": "SC",
+        "reason": "exact_name_match",
+        "matched": "Fairway Ford"
+      },
+      {
+        "name": "Bill Talley Ford Inc",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "Colley Ford"
+      },
+      {
+        "name": "Sheehy Ford of Richmond",
+        "state": "VA",
+        "reason": "exact_name_match",
+        "matched": "SHEEHY FORD OF RICHMOND"
+      },
+      {
+        "name": "Capitol Ford",
+        "state": "WV",
+        "reason": "exact_name_match",
+        "matched": "Capitol Ford"
+      },
+      {
+        "name": "Toothman Ford Sales Inc",
+        "state": "WV",
+        "reason": "substring_match",
+        "matched": "D AUTO SALES"
+      },
+      {
+        "name": "Corwin Ford Sales Inc",
+        "state": "WV",
+        "reason": "substring_match",
+        "matched": "D AUTO SALES"
+      },
+      {
+        "name": "A\nWESLEY CHAPEL NISSAN",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "Wesley Chapel Nissan"
+      },
+      {
+        "name": "2567\n\nDealer website\nContact Dealer\nE\nBRANDON NISSAN",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "Brandon Nissan"
+      },
+      {
+        "name": "2567\n\nDealer website\nContact Dealer\nD\nBRANDON NISSAN",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "Brandon Nissan"
+      },
+      {
+        "name": "3095\n\nDealer website\nContact Dealer\nF\nJENKINS NISSAN",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "JENKINS NISSAN INC"
+      },
+      {
+        "name": "Live Chat\nEnglish\nABOUT\nAbout Nissan",
+        "state": "SC",
+        "reason": "substring_match",
+        "matched": "ENGLISH MOTORS INC"
+      },
+      {
+        "name": "A\nSTART PURCHASE ONLINE\nVICTORY NISSAN OF MECHANICSVILLE",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "Victory Nissan of Mechanicsville"
+      },
+      {
+        "name": "A\nPASSPORT NISSAN OF ALEXANDRIA",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "Passport Nissan Alexandria"
+      },
+      {
+        "name": "A\nFAMILY NISSAN",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "Family Nissan"
+      },
+      {
+        "name": "0100\n\nDealer website\nContact Dealer\nB\nNISSAN OF GARDEN CITY",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "NISSAN OF GARDEN CITY"
+      },
+      {
+        "name": "8181\n\nDealer website\nContact Dealer\nJ\nKINGS NISSAN",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "Kings Nissan"
+      },
+      {
+        "name": "7600\n\nDealer website\nContact Dealer\nN\nSOUTH SHORE NISSAN",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "South Shore Nissan"
+      },
+      {
+        "name": "A\nPREMIER NISSAN MORGANTOWN",
+        "state": "WV",
+        "reason": "substring_match",
+        "matched": "PREMIER MOTORS"
+      },
+      {
+        "name": "Raleigh,",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "Leith Maserati of Raleigh"
+      },
+      {
+        "name": "Auto Park Kia",
+        "state": "NC",
+        "reason": "exact_name_match",
+        "matched": "AutoPark Kia"
+      },
+      {
+        "name": "Charlotte,",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "Port Charlotte Honda-Volkswagen"
+      },
+      {
+        "name": "Vann York Kia",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "VANN YORK AUTO INC"
+      },
+      {
+        "name": "2445 North Main Street",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "North Main Motors"
+      },
+      {
+        "name": "Mechanicsville,",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "Victory Nissan of Mechanicsville"
+      },
+      {
+        "name": "Richmond,",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "SHEEHY LEXUS OF RICHMOND"
+      },
+      {
+        "name": "Ourisman Kia of Alexandria",
+        "state": "VA",
+        "reason": "exact_name_match",
+        "matched": "OURISMAN KIA OF ALEXANDRIA"
+      },
+      {
+        "name": "Alexandria,",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "Passport Nissan Alexandria"
+      },
+      {
+        "name": "Beyer Kia of Falls Church",
+        "state": "VA",
+        "reason": "exact_name_match",
+        "matched": "Beyer Kia Falls Church"
+      },
+      {
+        "name": "Chesapeake,",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "CHESAPEAKE FINANCIAL SERVICES"
+      },
+      {
+        "name": "Motor Mile Kia",
+        "state": "VA",
+        "reason": "exact_name_match",
+        "matched": "MOTOR MILE KIA"
+      },
+      {
+        "name": "Christiansburg,",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "CHRISTIAN MOTORS INC"
+      },
+      {
+        "name": "Barboursville,",
+        "state": "WV",
+        "reason": "substring_match",
+        "matched": "Victory Toyota Barboursville"
+      },
+      {
+        "name": "Ken Ganley Kia Clarksburg",
+        "state": "WV",
+        "reason": "exact_name_match",
+        "matched": "Ken Ganley Kia of Clarksburg"
+      },
+      {
+        "name": "Bridgeport,",
+        "state": "WV",
+        "reason": "substring_match",
+        "matched": "BRIDGEPORT AUTO MART PRE OWNED INC"
+      },
+      {
+        "name": "NAPLETON'S COUNTRYSIDE MAZDA",
+        "state": "IL",
+        "reason": "substring_match",
+        "matched": "COUNTRYSIDE MOTORS LLC"
+      },
+      {
+        "name": "ART HILL MAZDA",
+        "state": "IN",
+        "reason": "exact_name_match",
+        "matched": "ART HILL MAZDA"
+      },
+      {
+        "name": "RICK CASE MAZDA",
+        "state": "GA",
+        "reason": "exact_name_match",
+        "matched": "Rick Case Mazda"
+      },
+      {
+        "name": "1\nBMW of Raleigh",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "BMW of Raleigh"
+      },
+      {
+        "name": "NC 27407\n Certified Center\n7\nCentury BMW",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "Century Motors"
+      },
+      {
+        "name": "NC 27713\n Certified Center\n4\nBMW of Raleigh",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "BMW of Raleigh"
+      },
+      {
+        "name": "NC 28227\n8\nBMW of Roanoke",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "BMW of Roanoke"
+      },
+      {
+        "name": "NC 28704\n Certified Center\n2\nCentury BMW",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "Century Motors"
+      },
+      {
+        "name": "NC 28227\n6\nCentury BMW",
+        "state": "SC",
+        "reason": "substring_match",
+        "matched": "Century Motors"
+      },
+      {
+        "name": "1\nCentury BMW",
+        "state": "SC",
+        "reason": "substring_match",
+        "matched": "Century Motors"
+      },
+      {
+        "name": "1\nRichmond BMW",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "Richmond BMW"
+      },
+      {
+        "name": "VA 23113\n Certified Center\n3\nCasey BMW",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "CASEY BMW"
+      },
+      {
+        "name": "VA 22031\n Certified Center\n8\nPassport BMW",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "Passport BMW"
+      },
+      {
+        "name": "VA 22304\n Certified Center\n2\nPassport BMW",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "Passport BMW"
+      },
+      {
+        "name": "PA 17404\n13\nRichmond BMW",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "Richmond BMW"
+      },
+      {
+        "name": "VA 23462\n Certified Center\n2\nCasey BMW",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "CASEY BMW"
+      },
+      {
+        "name": "VA 23113\n Certified Center\n4\nRichmond BMW",
+        "state": "VA",
+        "reason": "substring_match",
+        "matched": "Richmond BMW"
+      },
+      {
+        "name": "1\nBMW of Roanoke",
+        "state": "VA",
+        "reason": "fuzzy_name_state_match",
+        "matched": "BMW of Roanoke"
+      },
+      {
+        "name": "Learn More\n\nToyota Express Maintenance",
+        "state": "MO",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "Learn More\n\nToyota Express Maintenance",
+        "state": "KS",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "Learn More\n\nToyota Express Maintenance",
+        "state": "IA",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "Learn More\n\nToyota Express Maintenance",
+        "state": "NE",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "Learn More\n\nToyota Express Maintenance",
+        "state": "ND",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "Learn More\n\nToyota Express Maintenance",
+        "state": "SD",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "Learn More\n\nToyota Express Maintenance",
+        "state": "WY",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "Learn More\n\nToyota Express Maintenance",
+        "state": "MT",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "Midway Ford Truck Center",
+        "state": "MO",
+        "reason": "substring_match",
+        "matched": "MIDWAY AUTO GROUP"
+      },
+      {
+        "name": "Metro Ford",
+        "state": "MO",
+        "reason": "exact_name_match",
+        "matched": "Metro Ford"
+      },
+      {
+        "name": "Midway Ford Truck Center",
+        "state": "KS",
+        "reason": "substring_match",
+        "matched": "MIDWAY AUTO GROUP"
+      },
+      {
+        "name": "Victory Ford",
+        "state": "KS",
+        "reason": "substring_match",
+        "matched": "Victory Ford Hyundai Toyota"
+      },
+      {
+        "name": "Dewey Ford",
+        "state": "IA",
+        "reason": "exact_name_match",
+        "matched": "Dewey Ford"
+      },
+      {
+        "name": "Ford Security Package requires the Ford app",
+        "state": "ND",
+        "reason": "substring_match",
+        "matched": "Equire Inc"
+      },
+      {
+        "name": "Ken Garff Ford Cheyenne",
+        "state": "WY",
+        "reason": "substring_match",
+        "matched": "Ken Garff Ford"
+      },
+      {
+        "name": "Ford Security Package requires the Ford app",
+        "state": "WY",
+        "reason": "substring_match",
+        "matched": "Equire Inc"
+      },
+      {
+        "name": "Bob Smith Ford",
+        "state": "MT",
+        "reason": "exact_name_match",
+        "matched": "BOB SMITH FORD"
+      },
+      {
+        "name": "8181\n\nDealer website\nContact Dealer\nB\nNISSAN OF HUNTINGTON",
+        "state": "MO",
+        "reason": "substring_match",
+        "matched": "NISSAN OF HUNTINGTON"
+      },
+      {
+        "name": "5600\n\nDealer website\nContact Dealer\nD\nSOUTH SHORE NISSAN",
+        "state": "MO",
+        "reason": "substring_match",
+        "matched": "South Shore Nissan"
+      },
+      {
+        "name": "2300\n\nDealer website\nContact Dealer\nF\nNISSAN OF GARDEN CITY",
+        "state": "MO",
+        "reason": "substring_match",
+        "matched": "NISSAN OF GARDEN CITY"
+      },
+      {
+        "name": "5150\n\nDealer website\nContact Dealer\nG\nNISSAN OF BAY SHORE",
+        "state": "MO",
+        "reason": "substring_match",
+        "matched": "NISSAN OF BAY SHORE"
+      },
+      {
+        "name": "0500\n\nDealer website\nContact Dealer\nK\nFAMILY NISSAN",
+        "state": "MO",
+        "reason": "substring_match",
+        "matched": "Family Nissan"
+      },
+      {
+        "name": "A\nRAMSEY NISSAN",
+        "state": "MO",
+        "reason": "substring_match",
+        "matched": "RAMSEY MOTORS"
+      },
+      {
+        "name": "6700\n\nDealer website\nContact Dealer\nH\nHILLTOP NISSAN",
+        "state": "MO",
+        "reason": "substring_match",
+        "matched": "HILLTOP MOTORS"
+      },
+      {
+        "name": "8181\n\nDealer website\nContact Dealer\nB\nNISSAN OF HUNTINGTON",
+        "state": "KS",
+        "reason": "substring_match",
+        "matched": "NISSAN OF HUNTINGTON"
+      },
+      {
+        "name": "5600\n\nDealer website\nContact Dealer\nD\nSOUTH SHORE NISSAN",
+        "state": "KS",
+        "reason": "substring_match",
+        "matched": "South Shore Nissan"
+      },
+      {
+        "name": "2300\n\nDealer website\nContact Dealer\nF\nNISSAN OF GARDEN CITY",
+        "state": "KS",
+        "reason": "substring_match",
+        "matched": "NISSAN OF GARDEN CITY"
+      },
+      {
+        "name": "5150\n\nDealer website\nContact Dealer\nG\nNISSAN OF BAY SHORE",
+        "state": "KS",
+        "reason": "substring_match",
+        "matched": "NISSAN OF BAY SHORE"
+      },
+      {
+        "name": "0500\n\nDealer website\nContact Dealer\nK\nFAMILY NISSAN",
+        "state": "KS",
+        "reason": "substring_match",
+        "matched": "Family Nissan"
+      },
+      {
+        "name": "Live Chat\nEnglish\nABOUT\nAbout Nissan",
+        "state": "IA",
+        "reason": "substring_match",
+        "matched": "ENGLISH MOTORS INC"
+      },
+      {
+        "name": "Live Chat\nEnglish\nABOUT\nAbout Nissan",
+        "state": "WY",
+        "reason": "substring_match",
+        "matched": "ENGLISH MOTORS INC"
+      },
+      {
+        "name": "Live Chat\nEnglish\nABOUT\nAbout Nissan",
+        "state": "MT",
+        "reason": "substring_match",
+        "matched": "ENGLISH MOTORS INC"
+      },
+      {
+        "name": "from 82001\nKen Garff Hyundai Cheyenne",
+        "state": "WY",
+        "reason": "substring_match",
+        "matched": "Ken Garff Hyundai Cheyenne"
+      },
+      {
+        "name": "5 of 10 matches\n1\nKen Garff Hyundai Cheyenne",
+        "state": "WY",
+        "reason": "substring_match",
+        "matched": "Ken Garff Hyundai Cheyenne"
+      },
+      {
+        "name": "from 82601\nKen Garff Hyundai Cheyenne",
+        "state": "WY",
+        "reason": "substring_match",
+        "matched": "Ken Garff Hyundai Cheyenne"
+      },
+      {
+        "name": "5 of 4 matches\n1\nKen Garff Hyundai Cheyenne",
+        "state": "WY",
+        "reason": "substring_match",
+        "matched": "Ken Garff Hyundai Cheyenne"
+      },
+      {
+        "name": "St. Louis,",
+        "state": "MO",
+        "reason": "substring_match",
+        "matched": "Jewish Federation of St. Louis"
+      },
+      {
+        "name": "Auffenberg Kia",
+        "state": "IL",
+        "reason": "substring_match",
+        "matched": "AUFFENBERG KIA OF CAPE GIRARDEAU"
+      },
+      {
+        "name": "Auffenberg Kia",
+        "state": "MO",
+        "reason": "substring_match",
+        "matched": "AUFFENBERG KIA OF CAPE GIRARDEAU"
+      },
+      {
+        "name": "Manhattan,",
+        "state": "KS",
+        "reason": "substring_match",
+        "matched": "MANHATTAN MOTORCARS INC"
+      },
+      {
+        "name": "Des Moines,",
+        "state": "IA",
+        "reason": "substring_match",
+        "matched": "RV ONE SUPERSTORES DES MOINES"
+      },
+      {
+        "name": "3600 South Expressway",
+        "state": "IA",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "3600 South Expressway",
+        "state": "NE",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "White's Mountain Kia",
+        "state": "WY",
+        "reason": "substring_match",
+        "matched": "Mountain Motors Inc"
+      },
+      {
+        "name": "White's Mountain Kia",
+        "state": "SD",
+        "reason": "substring_match",
+        "matched": "Mountain Motors Inc"
+      },
+      {
+        "name": "Cheyenne,",
+        "state": "WY",
+        "reason": "substring_match",
+        "matched": "Ken Garff Hyundai Cheyenne"
+      },
+      {
+        "name": "WELLESLEY MAZDA",
+        "state": "MA",
+        "reason": "exact_name_match",
+        "matched": "Wellesley Mazda"
+      },
+      {
+        "name": "ALM MAZDA MACON",
+        "state": "GA",
+        "reason": "exact_name_match",
+        "matched": "ALM Mazda Macon"
+      },
+      {
+        "name": "MODERN MAZDA OF BURLINGTON",
+        "state": "NC",
+        "reason": "substring_match",
+        "matched": "Modern Motors"
+      },
+      {
+        "name": "MAZDA OF VACAVILLE",
+        "state": "CA",
+        "reason": "exact_name_match",
+        "matched": "Mazda of Vacaville"
+      },
+      {
+        "name": "ALM MAZDA SOUTH",
+        "state": "GA",
+        "reason": "exact_name_match",
+        "matched": "ALM Mazda South"
+      },
+      {
+        "name": "1\nBMW of Loveland",
+        "state": "SD",
+        "reason": "substring_match",
+        "matched": "BMW of Loveland"
+      },
+      {
+        "name": "1\nBMW of Loveland",
+        "state": "WY",
+        "reason": "substring_match",
+        "matched": "BMW of Loveland"
+      },
+      {
+        "name": "Learn More\n\nToyota Express Maintenance",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "Learn More\n\nToyota Express Maintenance",
+        "state": "AL",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "Learn More\n\nToyota Express Maintenance",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Xpress Motors"
+      },
+      {
+        "name": "found\n1\nChatham Parkway Toyota",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Chatham Parkway Toyota"
+      },
+      {
+        "name": "found\n1\nMiracle Toyota of North Augusta",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "MIRACLE TOYOTA"
+      },
+      {
+        "name": "Metro Ford Inc",
+        "state": "FL",
+        "reason": "exact_name_match",
+        "matched": "Metro Ford"
+      },
+      {
+        "name": "Midway Ford",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "MIDWAY AUTO GROUP"
+      },
+      {
+        "name": "Greenway Ford",
+        "state": "FL",
+        "reason": "exact_name_match",
+        "matched": "Greenway Ford"
+      },
+      {
+        "name": "Veterans Ford",
+        "state": "FL",
+        "reason": "exact_name_match",
+        "matched": "Veterans Ford"
+      },
+      {
+        "name": "Havana Ford",
+        "state": "FL",
+        "reason": "exact_name_match",
+        "matched": "HAVANA FORD INC"
+      },
+      {
+        "name": "Country Ford",
+        "state": "AL",
+        "reason": "substring_match",
+        "matched": "Rockdale Country Ford"
+      },
+      {
+        "name": "Moyer Ford Sales",
+        "state": "AL",
+        "reason": "substring_match",
+        "matched": "D AUTO SALES"
+      },
+      {
+        "name": "McClary Ford",
+        "state": "AL",
+        "reason": "exact_name_match",
+        "matched": "MCCLARY FORD INC"
+      },
+      {
+        "name": "ALM Ford Marietta",
+        "state": "GA",
+        "reason": "exact_name_match",
+        "matched": "ALM Ford Marietta"
+      },
+      {
+        "name": "Live Chat\nEnglish\nABOUT\nAbout Nissan",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "ENGLISH MOTORS INC"
+      },
+      {
+        "name": "A\nJENKINS NISSAN OF LEESBURG",
+        "state": "AL",
+        "reason": "substring_match",
+        "matched": "JENKINS NISSAN INC"
+      },
+      {
+        "name": "8686\n\nDealer website\nContact Dealer\nG\nSTONE MOUNTAIN NISSAN",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Mountain Motors Inc"
+      },
+      {
+        "name": "6000\n\nDealer website\nContact Dealer\nB\nCENTRAL VALLEY NISSAN",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "VALLEY AUTO LLC"
+      },
+      {
+        "name": "Live Chat\nEnglish\nABOUT\nAbout Nissan",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "ENGLISH MOTORS INC"
+      },
+      {
+        "name": "8000\n\nDealer website\nContact Dealer\nC\nCENTRAL VALLEY NISSAN",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "VALLEY AUTO LLC"
+      },
+      {
+        "name": "from 32801\nGreenway Hyundai Orlando",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Greenway Auto Group"
+      },
+      {
+        "name": "5 of 10 matches\n1\nGreenway Hyundai Orlando",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Greenway Auto Group"
+      },
+      {
+        "name": "from 33601\nCourtesy Hyundai",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Courtesy Hyundai"
+      },
+      {
+        "name": "5 of 10 matches\n1\nCourtesy Hyundai",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Courtesy Hyundai"
+      },
+      {
+        "name": "3\nCrown Hyundai",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Crown Hyundai"
+      },
+      {
+        "name": "from 32301\nWerner Hyundai",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Werner Hyundai"
+      },
+      {
+        "name": "5 of 10 matches\n1\nWerner Hyundai",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Werner Hyundai"
+      },
+      {
+        "name": "3\nFive Star Hyundai Albany",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Hyundai of Albany"
+      },
+      {
+        "name": "from 36601\nHyundai Of Mobile",
+        "state": "AL",
+        "reason": "substring_match",
+        "matched": "Hyundai of Mobile"
+      },
+      {
+        "name": "5 of 10 matches\n1\nHyundai Of Mobile",
+        "state": "AL",
+        "reason": "substring_match",
+        "matched": "Hyundai of Mobile"
+      },
+      {
+        "name": "3\nTeam One Hyundai Of Gadsden",
+        "state": "AL",
+        "reason": "substring_match",
+        "matched": "Hyundai of Gadsden"
+      },
+      {
+        "name": "from 30301\nEd Voyles Hyundai",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Ed Voyles Hyundai"
+      },
+      {
+        "name": "3\nAlm Hyundai West",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "ALM Hyundai West"
+      },
+      {
+        "name": "from 30501\nKrause Family Hyundai",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Family Auto LLC"
+      },
+      {
+        "name": "5 of 10 matches\n1\nKrause Family Hyundai",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Family Auto LLC"
+      },
+      {
+        "name": "Miami Lakes,",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Miami Lakes Automall"
+      },
+      {
+        "name": "Greenway Kia West",
+        "state": "FL",
+        "reason": "exact_name_match",
+        "matched": "Greenway Kia West"
+      },
+      {
+        "name": "Orlando,",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Greenway Alfa Romeo Fiat of East Orlando"
+      },
+      {
+        "name": "Greenway Kia East",
+        "state": "FL",
+        "reason": "exact_name_match",
+        "matched": "Greenway Kia East"
+      },
+      {
+        "name": "City Kia of Greater Orlando",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "City Kia"
+      },
+      {
+        "name": "Century Kia",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Century Motors"
+      },
+      {
+        "name": "Courtesy Kia of Brandon",
+        "state": "FL",
+        "reason": "exact_name_match",
+        "matched": "Courtesy KIA of Brandon"
+      },
+      {
+        "name": "Crown Kia",
+        "state": "FL",
+        "reason": "exact_name_match",
+        "matched": "Crown Kia"
+      },
+      {
+        "name": "Werner Kia",
+        "state": "FL",
+        "reason": "exact_name_match",
+        "matched": "Werner Kia"
+      },
+      {
+        "name": "Tallahassee,",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Jaguar Land Rover Tallahassee"
+      },
+      {
+        "name": "Valdosta,",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Valdosta Toyota/Scion"
+      },
+      {
+        "name": "Bradenton,",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Firkins Mitsubishi-Bradenton"
+      },
+      {
+        "name": "Sarasota,",
+        "state": "FL",
+        "reason": "substring_match",
+        "matched": "Sarasota CDJR"
+      },
+      {
+        "name": "Birmingham,",
+        "state": "AL",
+        "reason": "substring_match",
+        "matched": "Voyles Chrysler Dodge Jeep Ram Birmingham"
+      },
+      {
+        "name": "Greenway Kia of Riverchase",
+        "state": "AL",
+        "reason": "exact_name_match",
+        "matched": "Greenway Kia of Riverchase"
+      },
+      {
+        "name": "Mobile,",
+        "state": "AL",
+        "reason": "substring_match",
+        "matched": "ROYAL AUTOMOBILE INC"
+      },
+      {
+        "name": "University Kia",
+        "state": "AL",
+        "reason": "substring_match",
+        "matched": "University Kia of Huntsville"
+      },
+      {
+        "name": "Huntsville,",
+        "state": "AL",
+        "reason": "substring_match",
+        "matched": "Landers Mclarty Nissan of Huntsville"
+      },
+      {
+        "name": "Decatur,",
+        "state": "AL",
+        "reason": "substring_match",
+        "matched": "Greenway Hyundai of Decatur"
+      },
+      {
+        "name": "Kia South Atlanta",
+        "state": "GA",
+        "reason": "exact_name_match",
+        "matched": "Kia South Atlanta"
+      },
+      {
+        "name": "Morrow,",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "The Hertz Corporation-Morrow"
+      },
+      {
+        "name": "Alm Kia South",
+        "state": "GA",
+        "reason": "exact_name_match",
+        "matched": "ALM Kia South"
+      },
+      {
+        "name": "Union City,",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Nalley Toyota Union City"
+      },
+      {
+        "name": "Kia Country of Savannah",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Kia Country"
+      },
+      {
+        "name": "Savannah,",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Victory Chevrolet Savannah"
+      },
+      {
+        "name": "Kia Country of Hilton Head",
+        "state": "SC",
+        "reason": "substring_match",
+        "matched": "Kia Country"
+      },
+      {
+        "name": "Kia Country of Hilton Head",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Kia Country"
+      },
+      {
+        "name": "Lou Sobh Kia of Brunswick",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Lou Sobh Kia"
+      },
+      {
+        "name": "Gainesville,",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "GAINESVILLE MARINA"
+      },
+      {
+        "name": "Kia Mall of Georgia",
+        "state": "GA",
+        "reason": "exact_name_match",
+        "matched": "KIA MALL OF GEORGIA"
+      },
+      {
+        "name": "Lou Sobh Kia",
+        "state": "GA",
+        "reason": "exact_name_match",
+        "matched": "Lou Sobh Kia"
+      },
+      {
+        "name": "PACIFICO MAZDA",
+        "state": "PA",
+        "reason": "exact_name_match",
+        "matched": "Pacifico Mazda"
+      },
+      {
+        "name": "HAMILTON MAZDA",
+        "state": "NJ",
+        "reason": "exact_name_match",
+        "matched": "Hamilton Mazda"
+      },
+      {
+        "name": "PINE BELT MAZDA",
+        "state": "NJ",
+        "reason": "exact_name_match",
+        "matched": "Pine Belt Mazda"
+      },
+      {
+        "name": "CHAPMAN MAZDA SALES",
+        "state": "NJ",
+        "reason": "substring_match",
+        "matched": "INCA AUTO SALES"
+      },
+      {
+        "name": "1\nNalley BMW of Decatur",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Nalley BMW of Decatur"
+      },
+      {
+        "name": "GA 30606\n7\nBMW of Macon",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "TN 37421\n Certified Center\n9\nBMW of Columbus",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Bmw of Columbus"
+      },
+      {
+        "name": "GA 30606\n4\nCentury BMW",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Century Motors"
+      },
+      {
+        "name": "GA 30004\n Certified Center\n4\nNalley BMW of Decatur",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Nalley BMW of Decatur"
+      },
+      {
+        "name": "GA 30291\n7\nCentury BMW",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Century Motors"
+      },
+      {
+        "name": "TN 37421\n Certified Center\n9\nBMW of Macon",
+        "state": "GA",
+        "reason": "substring_match",
+        "matched": "Bmw of Macon"
+      },
+      {
+        "name": "Airport Marina Ford",
+        "state": "CA",
+        "reason": "exact_name_match",
+        "matched": "Airport Marina Ford"
+      },
+      {
+        "name": "Ford Security Package requires the Ford app",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "Equire Inc"
+      },
+      {
+        "name": "Perry Ford of National City",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "NATIONAL MOTORS"
+      },
+      {
+        "name": "Mossy Ford",
+        "state": "CA",
+        "reason": "exact_name_match",
+        "matched": "MOSSY FORD"
+      },
+      {
+        "name": "Kearny Mesa Ford",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "Kearny Mesa Ford Kia"
+      },
+      {
+        "name": "Live Chat\nEnglish\nABOUT\nAbout Nissan",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "ENGLISH MOTORS INC"
+      },
+      {
+        "name": "from 92101\nDalton Hyundai National City",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "NATIONAL MOTORS"
+      },
+      {
+        "name": "5 of 10 matches\n1\nDalton Hyundai National City",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "NATIONAL MOTORS"
+      },
+      {
+        "name": "Kia Downtown Los Angeles",
+        "state": "CA",
+        "reason": "exact_name_match",
+        "matched": "Kia of Downtown Los Angeles"
+      },
+      {
+        "name": "Los Angeles,",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "Polestar Los Angeles"
+      },
+      {
+        "name": "Carson,",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "Fletcher Jones Toyota of Carson"
+      },
+      {
+        "name": "1940 National City Blvd.",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "NATIONAL MOTORS"
+      },
+      {
+        "name": "National City,",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "NATIONAL MOTORS"
+      },
+      {
+        "name": "San Diego,",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "Polestar San Diego"
+      },
+      {
+        "name": "Elk Grove,",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "ELK GROVE HONDA"
+      },
+      {
+        "name": "Bakersfield,",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "Diamond Truck Sales - Bakersfield"
+      },
+      {
+        "name": "Visalia,",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "BMW OF VISALIA"
+      },
+      {
+        "name": "CA 90036\n Certified Center\n3\nMcKenna BMW",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "McKenna BMW"
+      },
+      {
+        "name": "CA 90650\n Certified Center\n4\nSouth Bay BMW",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "South Bay BMW"
+      },
+      {
+        "name": "CA 90504\n Certified Center\n5\nNew Century BMW",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "Century Motors"
+      },
+      {
+        "name": "CA 90755\n Certified Center\n8\nCentury West BMW",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "Century Motors"
+      },
+      {
+        "name": "CA 92111\n Certified Center\n2\nBMW of El Cajon",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "BMW of El Cajon"
+      },
+      {
+        "name": "CA 92020\n Certified Center\n3\nBMW of Chula Vista",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "BMW of Chula Vista"
+      },
+      {
+        "name": "CA 95661\n Certified Center\n4\nBMW of Napa Valley",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "VALLEY AUTO LLC"
+      },
+      {
+        "name": "CA 94588\n Certified Center\n7\nValley BMW",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "VALLEY AUTO LLC"
+      },
+      {
+        "name": "CA 94901\n Certified Center\n11\nBMW of San Francisco",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "FRANCIS MOTORS"
+      },
+      {
+        "name": "CA 93313\n2\nBMW of Visalia",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "BMW OF VISALIA"
+      },
+      {
+        "name": "CA 93105\n Certified Center\n5\nBMW of Camarillo",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "BMW of Camarillo"
+      },
+      {
+        "name": "CA 91401\n Certified Center\n10\nCentury West BMW",
+        "state": "CA",
+        "reason": "substring_match",
+        "matched": "Century Motors"
+      }
+    ]
+  },
+  "gap_closure": {
+    "Central Atlantic": {
+      "original_deficit": 78,
+      "new_leads_added": 572,
+      "remaining_deficit": 0,
+      "closure_pct": 100
+    },
+    "Central": {
+      "original_deficit": 40,
+      "new_leads_added": 840,
+      "remaining_deficit": 0,
+      "closure_pct": 100
+    },
+    "South East": {
+      "original_deficit": 18,
+      "new_leads_added": 507,
+      "remaining_deficit": 0,
+      "closure_pct": 100
+    },
+    "California": {
+      "original_deficit": 7,
+      "new_leads_added": 179,
+      "remaining_deficit": 0,
+      "closure_pct": 100
+    }
+  },
+  "rep_fill_in_required": {
+    "fields_most_missing": [
+      [
+        "contact_name",
+        {
+          "populated": 0,
+          "missing": 2319,
+          "capture_rate": 0.0
+        }
+      ],
+      [
+        "contact_title",
+        {
+          "populated": 0,
+          "missing": 2319,
+          "capture_rate": 0.0
+        }
+      ],
+      [
+        "contact_email",
+        {
+          "populated": 0,
+          "missing": 2319,
+          "capture_rate": 0.0
+        }
+      ],
+      [
+        "contact_phone",
+        {
+          "populated": 0,
+          "missing": 2319,
+          "capture_rate": 0.0
+        }
+      ],
+      [
+        "new_inventory_count",
+        {
+          "populated": 0,
+          "missing": 2319,
+          "capture_rate": 0.0
+        }
+      ]
+    ]
+  }
+}
