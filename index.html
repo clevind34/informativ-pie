@@ -2828,6 +2828,7 @@ try {
         }
 
         function applyFilters() {
+            window._nnPage = 0; window._csPage = 0; // Reset pagination on filter change
             const repFilter = document.getElementById('repFilter').value;
 
             // Apply to net-new (exclude flagged-as-customer prospects)
@@ -3043,7 +3044,15 @@ try {
             const tbody = document.getElementById('prospectTableBody');
             tbody.innerHTML = '';
 
-            prospects.forEach((p, idx) => {
+            // Paginated rendering — 50 rows per page
+            const PAGE_SIZE_NN = 50;
+            window._nnProspects = prospects;
+            window._nnPage = window._nnPage || 0;
+            if (window._nnPage * PAGE_SIZE_NN >= prospects.length) window._nnPage = 0;
+            const start = window._nnPage * PAGE_SIZE_NN;
+            const page = prospects.slice(start, start + PAGE_SIZE_NN);
+
+            page.forEach((p, idx) => {
                 const tr = document.createElement('tr');
                 tr.style.cursor = 'pointer';
                 tr.onclick = function(e) { if (!e.target.closest('a')) openProspectPanel(allNetNewProspects.indexOf(p)); };
@@ -3069,13 +3078,42 @@ try {
             if (prospects.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="11" class="history-empty">No prospects match your filters</td></tr>';
             }
+
+            // Pagination controls
+            const totalPages = Math.ceil(prospects.length / PAGE_SIZE_NN);
+            let pager = document.getElementById('nnPager');
+            if (!pager) {
+                pager = document.createElement('div');
+                pager.id = 'nnPager';
+                pager.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border);font-size:13px;font-family:var(--font-body);';
+                tbody.closest('table').parentNode.appendChild(pager);
+            }
+            if (totalPages <= 1) { pager.style.display = 'none'; } else {
+                pager.style.display = 'flex';
+                pager.innerHTML = '<span style="color:var(--slate-500);">Showing ' + (start+1) + '–' + Math.min(start+PAGE_SIZE_NN, prospects.length) + ' of ' + prospects.length.toLocaleString() + ' prospects</span>' +
+                    '<div style="display:flex;gap:6px;">' +
+                    '<button onclick="window._nnPage=0;renderProspectPipeline(window._nnProspects)" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-size:12px;font-weight:600;' + (window._nnPage === 0 ? 'opacity:0.4;pointer-events:none;' : '') + '">First</button>' +
+                    '<button onclick="window._nnPage=Math.max(0,window._nnPage-1);renderProspectPipeline(window._nnProspects)" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-size:12px;font-weight:600;' + (window._nnPage === 0 ? 'opacity:0.4;pointer-events:none;' : '') + '">← Prev</button>' +
+                    '<span style="padding:6px 12px;font-weight:700;color:var(--accent);">Page ' + (window._nnPage+1) + ' of ' + totalPages + '</span>' +
+                    '<button onclick="window._nnPage=Math.min(' + (totalPages-1) + ',window._nnPage+1);renderProspectPipeline(window._nnProspects)" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-size:12px;font-weight:600;' + (window._nnPage >= totalPages-1 ? 'opacity:0.4;pointer-events:none;' : '') + '">Next →</button>' +
+                    '<button onclick="window._nnPage=' + (totalPages-1) + ';renderProspectPipeline(window._nnProspects)" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-size:12px;font-weight:600;' + (window._nnPage >= totalPages-1 ? 'opacity:0.4;pointer-events:none;' : '') + '">Last</button>' +
+                    '</div>';
+            }
         }
 
         function renderCrossSellPipeline(accounts) {
             const tbody = document.getElementById('crosssellTableBody');
             tbody.innerHTML = '';
 
-            accounts.forEach((a, idx) => {
+            // Paginated rendering — 50 rows per page
+            const PAGE_SIZE_CS = 50;
+            window._csAccounts = accounts;
+            window._csPage = window._csPage || 0;
+            if (window._csPage * PAGE_SIZE_CS >= accounts.length) window._csPage = 0;
+            const csStart = window._csPage * PAGE_SIZE_CS;
+            const csPage = accounts.slice(csStart, csStart + PAGE_SIZE_CS);
+
+            csPage.forEach((a, idx) => {
                 const tr = document.createElement('tr');
                 tr.style.cursor = 'pointer';
                 tr.onclick = function() { openCrossSellPanel(allCrossSellAccounts.indexOf(a)); };
@@ -3099,7 +3137,29 @@ try {
             if (accounts.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="9" class="history-empty">No accounts match your filters</td></tr>';
             }
+
+            // Pagination controls
+            const csTotalPages = Math.ceil(accounts.length / PAGE_SIZE_CS);
+            let csPager = document.getElementById('csPager');
+            if (!csPager) {
+                csPager = document.createElement('div');
+                csPager.id = 'csPager';
+                csPager.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border);font-size:13px;font-family:var(--font-body);';
+                tbody.closest('table').parentNode.appendChild(csPager);
+            }
+            if (csTotalPages <= 1) { csPager.style.display = 'none'; } else {
+                csPager.style.display = 'flex';
+                csPager.innerHTML = '<span style="color:var(--slate-500);">Showing ' + (csStart+1) + '–' + Math.min(csStart+PAGE_SIZE_CS, accounts.length) + ' of ' + accounts.length.toLocaleString() + ' accounts</span>' +
+                    '<div style="display:flex;gap:6px;">' +
+                    '<button onclick="window._csPage=0;renderCrossSellPipeline(window._csAccounts)" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-size:12px;font-weight:600;' + (window._csPage === 0 ? 'opacity:0.4;pointer-events:none;' : '') + '">First</button>' +
+                    '<button onclick="window._csPage=Math.max(0,window._csPage-1);renderCrossSellPipeline(window._csAccounts)" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-size:12px;font-weight:600;' + (window._csPage === 0 ? 'opacity:0.4;pointer-events:none;' : '') + '">← Prev</button>' +
+                    '<span style="padding:6px 12px;font-weight:700;color:var(--accent);">Page ' + (window._csPage+1) + ' of ' + csTotalPages + '</span>' +
+                    '<button onclick="window._csPage=Math.min(' + (csTotalPages-1) + ',window._csPage+1);renderCrossSellPipeline(window._csAccounts)" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-size:12px;font-weight:600;' + (window._csPage >= csTotalPages-1 ? 'opacity:0.4;pointer-events:none;' : '') + '">Next →</button>' +
+                    '<button onclick="window._csPage=' + (csTotalPages-1) + ';renderCrossSellPipeline(window._csAccounts)" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-size:12px;font-weight:600;' + (window._csPage >= csTotalPages-1 ? 'opacity:0.4;pointer-events:none;' : '') + '">Last</button>' +
+                    '</div>';
+            }
         }
+
 
         function renderProximityIntelligence(prospects) {
             const tbody = document.getElementById('proximityTableBody');
@@ -4424,7 +4484,9 @@ try {
             
             // Open Chuck with the pre-filled prompt
             const encoded = encodeURIComponent(prompt);
-            const chuckUrl = 'https://informativchuck.netlify.app/?pie_prompt=' + encoded;
+            // SSO: Pass identity token to Chuck via #gw= hash param
+            const _ssoToken = window._identityToken || '';
+            const chuckUrl = 'https://informativchuck.netlify.app/?pie_prompt=' + encoded + (_ssoToken ? '#gw=' + encodeURIComponent(_ssoToken) : '');
             window.open(chuckUrl, '_blank', 'width=520,height=750,scrollbars=yes');
             
             // Close the overlay
@@ -6742,7 +6804,9 @@ try {
             }
 
             const encoded = encodeURIComponent(prompt);
-            const chuckUrl = 'https://informativchuck.netlify.app/?pie_prompt=' + encoded;
+            // SSO: Pass identity token to Chuck via #gw= hash param
+            const _ssoToken = window._identityToken || '';
+            const chuckUrl = 'https://informativchuck.netlify.app/?pie_prompt=' + encoded + (_ssoToken ? '#gw=' + encodeURIComponent(_ssoToken) : '');
             window.open(chuckUrl, '_blank', 'width=520,height=750,scrollbars=yes');
 
             const overlay = document.getElementById('chuckOverlay');
