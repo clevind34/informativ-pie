@@ -7,15 +7,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Preload data files — starts download immediately, in parallel with HTML/CSS parsing -->
-    <link rel="preload" href="pie-data-nn.json" as="fetch" crossorigin>
-    <link rel="preload" href="pie-data-cs.json" as="fetch" crossorigin>
-    <link rel="preload" href="pie-data-aff.json" as="fetch" crossorigin>
+    <link rel="preload" href="pie-data-nn.json" as="fetch">
+    <link rel="preload" href="pie-data-cs.json" as="fetch">
+    <link rel="preload" href="pie-data-aff.json" as="fetch">
     <script>
         // Start fetches BEFORE browser parses rest of page — same pattern as CI Dashboard
+        window._pieStartTime = performance.now();
         window._pieDataPromises = {
-            nn: fetch('pie-data-nn.json').then(function(r) { return r.json(); }),
-            cs: fetch('pie-data-cs.json').then(function(r) { return r.json(); }),
-            aff: fetch('pie-data-aff.json').then(function(r) { return r.json(); })
+            nn: fetch('pie-data-nn.json').then(function(r) { if (!r.ok) throw new Error('NN ' + r.status); return r.json(); }),
+            cs: fetch('pie-data-cs.json').then(function(r) { if (!r.ok) throw new Error('CS ' + r.status); return r.json(); }),
+            aff: fetch('pie-data-aff.json').then(function(r) { if (!r.ok) throw new Error('AFF ' + r.status); return r.json(); })
         };
     </script>
 
@@ -2546,23 +2547,23 @@ try {
             allCrossSellAccounts = PIE_RAW_CS.map(c => ({
                 mcid: c.id,
                 rank: c.r,
-                account_name: c.n,
-                territory: c.ter,
-                assigned_rep: c.rep,
-                state: c.st,
-                current_mrr: c.mrr,
-                margin_pct: c.mg,
-                health_score: c.hs,
-                estimated_vehicles: c.veh,
-                total_bureau_pulls: c.bp,
-                recommended_tier: c.tier,
-                total_potential_savings: c.sav,
-                is_3bureau_heavy: c.b3,
-                margin_direction: c.md,
-                revenue_potential_score: c.sc,
+                account_name: c.co || c.n || '',
+                territory: c.ter || '',
+                assigned_rep: c.rep || '',
+                state: c.st || '',
+                current_mrr: c.mrr || 0,
+                margin_pct: c.mg || 0,
+                health_score: c.hs || 0,
+                estimated_vehicles: c.veh || 0,
+                total_bureau_pulls: c.bp || 0,
+                recommended_tier: c.tier || '',
+                total_potential_savings: c.sav || 0,
+                is_3bureau_heavy: c.b3 || false,
+                margin_direction: c.md || '',
+                revenue_potential_score: c.sc || 0,
                 key_signals: c.sig || [],
                 risk_factors: c.rf || [],
-                confidence: c.conf,
+                confidence: c.conf || '',
                 all_products: c.ap || [],
                 primary_product: c.pp || '',
                 group: c.grp || '',
@@ -2720,6 +2721,7 @@ try {
         var _PIE_DATA_GATEWAY = (typeof API_PROXY !== 'undefined' ? API_PROXY : '/.netlify/functions/api-proxy');
 
         async function _loadPieDataAsync() {
+            var _t0 = performance.now();
             var overlay = document.getElementById('pieLoadingOverlay');
             var bar = document.getElementById('pieLoadingBar');
             var loaded = 0;
@@ -2747,17 +2749,19 @@ try {
                 PIE_RAW_CS = results[1];
                 AFFILIATE_RAW = results[2];
 
-                console.log('PIE: Data loaded — ' + PIE_RAW_NN.length + ' NN, ' + PIE_RAW_CS.length + ' CS, ' + AFFILIATE_RAW.length + ' AFF');
+                console.log('PIE: Data fetched in ' + Math.round(performance.now() - _t0) + 'ms — ' + PIE_RAW_NN.length + ' NN, ' + PIE_RAW_CS.length + ' CS, ' + AFFILIATE_RAW.length + ' AFF');
             } catch (err) {
                 console.error('PIE: Data fetch failed:', err.message);
                 // Data stays as empty arrays — dashboard will render empty state
             }
 
             // Initialize data structures (same as old synchronous path)
+            var _t1 = performance.now();
             pieData = loadPIEData();
             generateAffiliateLeads();
             restoreProspectState();
             _pieDataLoaded = true;
+            console.log('PIE: Data init in ' + Math.round(performance.now() - _t1) + 'ms');
 
             // Remove loading overlay
             if (overlay) {
@@ -2792,6 +2796,8 @@ try {
 
             // Wire up affiliate tab listeners (depends on allAffiliateLeads being populated)
             _initAffiliateListeners();
+
+            console.log('PIE: Full init complete in ' + Math.round(performance.now() - _t0) + 'ms');
 
             // Now try gateway API for fresher data (async background refresh)
             _refreshFromGateway();
@@ -3258,7 +3264,7 @@ try {
                     <td class="font-mono">$${a.current_mrr.toLocaleString()}</td>
                     <td><span style="color: ${marginColor}; font-weight: 600;">${a.margin_pct}%</span></td>
                     <td><span class="badge ${a.health_score >= 70 ? 'score-high' : a.health_score >= 50 ? 'score-medium' : 'score-low'}">${a.health_score}</span></td>
-                    <td>${a.estimated_vehicles}</td>
+                    <td>${a.estimated_vehicles || '-'}</td>
                     <td>${a.recommended_tier}</td>
                     <td class="font-mono" style="color: #059669; font-weight: 600;">$${a.total_potential_savings.toLocaleString()}</td>
                     <td>${a.key_signals[0] || 'N/A'}</td>
