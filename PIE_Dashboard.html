@@ -2589,15 +2589,16 @@ try {
             allCrossSellAccounts.forEach(function(c) { if (c.group) groupSet.add(c.group); });
             allNetNewProspects.forEach(function(p) { if (p.group) groupSet.add(p.group); });
             _allGroupNames = Array.from(groupSet).sort(function(a,b) { return a.localeCompare(b); });
-            // Populate group filter dropdowns
+            // Build options HTML once, set innerHTML once per dropdown (not innerHTML += in loop)
+            var optionsHtml = '<option value="">All Groups</option>';
+            _allGroupNames.forEach(function(g) {
+                optionsHtml += '<option value="' + g.replace(/"/g,'&quot;') + '">' + (g.length > 35 ? g.substring(0,32) + '...' : g) + '</option>';
+            });
             ['prospectGroupFilter','crosssellGroupFilter'].forEach(function(id) {
                 var sel = document.getElementById(id);
                 if (!sel) return;
                 var val = sel.value;
-                sel.innerHTML = '<option value="">All Groups</option>';
-                _allGroupNames.forEach(function(g) {
-                    sel.innerHTML += '<option value="' + g.replace(/"/g,'&quot;') + '">' + (g.length > 35 ? g.substring(0,32) + '...' : g) + '</option>';
-                });
+                sel.innerHTML = optionsHtml;
                 if (val) sel.value = val;
             });
         }
